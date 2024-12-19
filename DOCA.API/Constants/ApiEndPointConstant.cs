@@ -8,9 +8,12 @@ public class ApiEndPointConstant
     public const string ApiVersion = "/v1";
     public const string ApiEndpoint = RootEndPoint + ApiVersion;
     
-    public class User
+    
+    public class Auth
     {
-        public const string UserEndpoint = ApiEndpoint + "/user";
-        public const string Login = UserEndpoint + "/login";
+        public const string SendOtp = ApiEndpoint + "/otp";
+        public const string Signup = ApiEndpoint + "/signup";
+        public const string Login = ApiEndpoint + "/login";
+        public const string ForgetPassword = ApiEndpoint + "/forget-password";
     }
 }

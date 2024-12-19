@@ -6,6 +6,7 @@ using FluentValidation.AspNetCore;
 
 var logger = NLog.LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"))
     .GetCurrentClassLogger();
+
 try
 {
     var builder = WebApplication.CreateBuilder(args);
@@ -23,13 +24,14 @@ try
     });
     builder.Services.AddDatabase();
     // builder.Services.AddRedis();
-    // builder.Services.AddUnitOfWork();
-    // builder.Services.AddServices(builder.Configuration);
+    builder.Services.AddUnitOfWork();
+    builder.Services.AddServices(builder.Configuration);
     builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
     
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddAuthorization();
+    builder.Services.AddControllers();
     builder.Services.AddJwtAuthentication();
     builder.Services.AddConfigSwagger();
     builder.Services.AddSwaggerGen();

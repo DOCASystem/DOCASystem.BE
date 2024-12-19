@@ -7,10 +7,10 @@ public class Animal
 {
     [Key]
     public Guid Id { get; set; }
-    public string AnimalName { get; set; }
+    public string Name { get; set; }
     public int Age { get; set; }
     public string Sex { get; set; }
-    public string AnimalCategoryId { get; set; }
+    public Guid AnimalCategoryId { get; set; }
     [ForeignKey(nameof(AnimalCategoryId))]
-    public AnimalCategory AnimalCategory;
+    public AnimalCategory AnimalCategory { get; set; }
 }

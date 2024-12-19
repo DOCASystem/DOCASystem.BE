@@ -6,5 +6,5 @@ public class AnimalCategory
 {
     [Key]
     public Guid Id { get; set; }
-    public string AnimalName { get; set; }
+    public string Name { get; set; }
 }

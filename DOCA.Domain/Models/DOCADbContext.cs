@@ -5,62 +5,61 @@ namespace DOCA.Domain.Models;
 
 public class DOCADbContext : DbContext
 {
-    public DOCADbContext()
-    {
-        
-    }
+    // Default constructor for EF Core to use (for migrations and tools).
 
-    public DOCADbContext(DbContextOptions<DOCADbContext> options) : base(options)
-    {
-        
-    }
-    
-    public DbSet<User> User { get; set; }
-    public DbSet<Staff> Staff { get; set; }
-    public DbSet<ProductImage> ProductImage { get; set; }
-    public DbSet<Product> Product { get; set; }
-    public DbSet<Payment> Payment { get; set; }
-    public DbSet<OrderItem> OrderItem { get; set; }
-    public DbSet<Order> Order { get; set; }
-    public DbSet<Member> Member { get; set; }
-    public DbSet<Category> Category { get; set; }
-    public DbSet<BlogAnimal> BlogAnimal { get; set; }
-    public DbSet<Blog> Blog { get; set; }
-    public DbSet<AnimalImage> AnimalImage { get; set; }
-    public DbSet<AnimalCategory> AnimalCategory { get; set; }
-    public DbSet<Animal> Animal { get; set; }
-    public DbSet<ProductCategory> ProductCategory { get; set; }
 
+    // Constructor that allows setting options (useful for DI).
+    public DOCADbContext(DbContextOptions<DOCADbContext> options) : base(options) { }
+
+    // DbSet properties
+    public DbSet<User> Users { get; set; }
+    public DbSet<Staff> Staffs { get; set; }
+    public DbSet<ProductImage> ProductImages { get; set; }
+    public DbSet<Product> Products { get; set; }
+    public DbSet<Payment> Payments { get; set; }
+    public DbSet<OrderItem> OrderItems { get; set; }
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<Member> Members { get; set; }
+    public DbSet<Category> Categories { get; set; }
+    public DbSet<BlogAnimal> BlogAnimals { get; set; }
+    public DbSet<Blog> Blogs { get; set; }
+    public DbSet<AnimalImage> AnimalImages { get; set; }
+    public DbSet<AnimalCategory> AnimalCategories { get; set; }
+    public DbSet<Animal> Animals { get; set; }
+    public DbSet<ProductCategory> ProductCategories { get; set; }
+
+    // Configurations for the model using Fluent API
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         base.OnModelCreating(modelBuilder);
-        modelBuilder.Entity<User>().ToTable("User");
-        modelBuilder.Entity<Staff>().ToTable("Staff");
-        modelBuilder.Entity<ProductImage>().ToTable("ProductImage");
-        modelBuilder.Entity<Product>().ToTable("Product");
-        modelBuilder.Entity<Payment>().ToTable("Payment");
-        modelBuilder.Entity<OrderItem>().ToTable("OrderItem");
-        modelBuilder.Entity<Order>().ToTable("Order");
-        modelBuilder.Entity<Member>().ToTable("Member");
-        modelBuilder.Entity<Category>().ToTable("Category");
-        modelBuilder.Entity<BlogAnimal>().ToTable("BlogAnimal");
-        modelBuilder.Entity<Blog>().ToTable("Blog");
-        modelBuilder.Entity<AnimalImage>().ToTable("AnimalImage");
-        modelBuilder.Entity<AnimalCategory>().ToTable("AnimalCategory");
-        modelBuilder.Entity<Animal>().ToTable("Animal");
-        modelBuilder.Entity<ProductCategory>().ToTable("ProductCategory");
+
+        // Table mapping for each entity
+        // modelBuilder.Entity<User>().ToTable("Users");
+        // modelBuilder.Entity<Staff>().ToTable("Staffs");
+        // modelBuilder.Entity<ProductImage>().ToTable("ProductImages");
+        // modelBuilder.Entity<Product>().ToTable("Products");
+        // modelBuilder.Entity<Payment>().ToTable("Payments");
+        // modelBuilder.Entity<OrderItem>().ToTable("OrderItems");
+        // modelBuilder.Entity<Order>().ToTable("Orders");
+        // modelBuilder.Entity<Member>().ToTable("Members");
+        // modelBuilder.Entity<Category>().ToTable("Categories");
+        // modelBuilder.Entity<BlogAnimal>().ToTable("BlogAnimals");
+        // modelBuilder.Entity<Blog>().ToTable("Blogs");
+        // modelBuilder.Entity<Animal>().ToTable("Animals");
+        // modelBuilder.Entity<AnimalImage>().ToTable("AnimalImages");
+        // modelBuilder.Entity<AnimalCategory>().ToTable("AnimalCategories");
+        // modelBuilder.Entity<ProductCategory>().ToTable("ProductCategories");
     }
 
+    // Configuring the connection string for the database
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
         {
-            // optionsBuilder.UseSqlServer(
-            //     "Server=103.238.235.227,1433;Database=KALS-Production;User Id=sa;Password=$Thanhkhoa;Encrypt=True;TrustServerCertificate=True"
-            // );
+            // It's recommended to use appsettings.json or environment variables for connection strings
             optionsBuilder.UseSqlServer(
-                "Server=MAGIC-FLEXING\\SQLEXPRESS,1433;Database=DOCA;User Id=sa;Password=123456;Encrypt=True;TrustServerCertificate=True"
+                "Server=MAGIC-FLEXING\\SQLEXPRESS;Database=DOCA;User Id=sa;Password=123456;Encrypt=True;TrustServerCertificate=True"
             );
         }
     }

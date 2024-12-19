@@ -16,14 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-    <Folder Include="Mappers\" />
-    <Folder Include="Payload\Request\" />
-    <Folder Include="Services\Implement\" />
-    <Folder Include="Services\Interface\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\DOCA.Repository\DOCA.Repository.csproj" />
   </ItemGroup>
 

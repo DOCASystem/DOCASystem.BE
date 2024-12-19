@@ -9,7 +9,7 @@ public class AnimalImage
     public Guid Id { get; set; }
     public Guid AnimalId { get; set; }
     [ForeignKey(nameof(AnimalId))]
-    public Animal Animal;
+    public Animal Animal { get; set; }
     public string ImageUrl { get; set; }
     public bool IsMain { get; set; }
 }

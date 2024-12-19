@@ -5,7 +5,8 @@ namespace DOCA.Domain.Models;
 
 public class Member
 {
-    
+    [Key]
+    public Guid Id { get; set; }
     public Guid UserId { get; set; }
     [ForeignKey(nameof(UserId))]
     public User User { get; set; }
