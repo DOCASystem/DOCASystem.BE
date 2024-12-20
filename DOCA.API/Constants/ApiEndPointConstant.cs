@@ -16,4 +16,19 @@ public class ApiEndPointConstant
         public const string Login = ApiEndpoint + "/login";
         public const string ForgetPassword = ApiEndpoint + "/forget-password";
     }
+    
+    public class Member
+    {
+        public const string MemberEndpoint = ApiEndpoint + "/members";
+        public const string MemberById = MemberEndpoint + "/{id}";
+        public const string MemberInformation = MemberEndpoint + "/information";
+        public const string MemberWarrantyRequest = MemberEndpoint + "/warranty-requests";
+    }
+    
+    public class Product
+    {
+        public const string ProductEndpoint = ApiEndpoint + "/products";
+        public const string ProductById = ProductEndpoint + "/{id}";
+        public const string ProductImage = ProductById + "/product-image";
+    }
 }

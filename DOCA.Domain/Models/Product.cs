@@ -13,4 +13,8 @@ public class Product
     public DateTime CreatedAt { get; set; }
     public DateTime ModifiedAt { get; set; }
     public bool IsHidden { get; set; }
+    
+    public virtual ICollection<ProductCategory>? ProductCategories { get; set; }
+    
+    public virtual ICollection<ProductImage>? ProductImages { get; set; }
 }

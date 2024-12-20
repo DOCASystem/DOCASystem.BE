@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using DOCA.Domain.Filter;
 using DOCA.Domain.Paginate;
 using Microsoft.EntityFrameworkCore.Query;
 
@@ -30,20 +31,17 @@ public interface IGenericRepository<T> : IDisposable where T : class
         Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
         Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null);
 
-    Task<IPaginate<T>> GetPagingListAsync(
-        Expression<Func<T, bool>> predicate = null,
-        Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
-        Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null,
-        int page = 1,
-        int size = 10);
-
     Task<IPaginate<TResult>> GetPagingListAsync<TResult>(
         Expression<Func<T, TResult>> selector,
+        IFilter<T> filter = null,
         Expression<Func<T, bool>> predicate = null,
         Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
         Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null,
         int page = 1,
-        int size = 10);
+        int size = 10,
+        string sortBy = null,
+        bool isAsc = true
+    );
 
     #endregion
 
