@@ -31,4 +31,20 @@ public class ApiEndPointConstant
         public const string ProductById = ProductEndpoint + "/{id}";
         public const string ProductImage = ProductById + "/product-image";
     }
+    
+    public class Category
+    {
+        public const string CategoryEndPoint = ApiEndpoint + "/categories";
+        public const string CategoryById = CategoryEndPoint + "/{id}";
+        public const string UpdateProductCategory = CategoryById + "/product-category";
+        public const string ProductByCategoryId = CategoryById + "/product";
+    }
+    
+    public class AnimalCategory
+    {
+        public const string CategoryEndPoint = ApiEndpoint + "/animalCategories";
+        public const string CategoryById = CategoryEndPoint + "/{id}";
+        public const string UpdateAnimalCategory = CategoryById + "/animal-category";
+        public const string AnimalByCategoryId = CategoryById + "/animal";
+    }
 }

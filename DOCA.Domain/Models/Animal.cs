@@ -10,7 +10,9 @@ public class Animal
     public string Name { get; set; }
     public int Age { get; set; }
     public string Sex { get; set; }
-    public Guid AnimalCategoryId { get; set; }
-    [ForeignKey(nameof(AnimalCategoryId))]
-    public AnimalCategory AnimalCategory { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime ModifiedAt { get; set; }
+    public virtual ICollection<AnimalCategoryRelationship>? AnimalCategoryRelationship { get; set; }
+    
+    public virtual ICollection<AnimalImage>? AnimalImage { get; set; }
 }

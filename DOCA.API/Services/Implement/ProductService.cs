@@ -233,33 +233,33 @@ public class ProductService : BaseService<ProductService>, IProductService
             }
         }
     }
-    // public async Task<IPaginate<GetProductResponse>> GetProductByCategoryIdAsync(Guid categoryId, int page, int size)
-    // {
-    //     if (categoryId == Guid.Empty) throw new BadHttpRequestException(MessageConstant.Category.CategoryIdNotNull);
-    //
-    //     var products = await _unitOfWork.GetRepository<Product>().GetPagingListAsync(
-    //         selector: p => new Product()
-    //         {
-    //             Id = p.Id,
-    //             Description = p.Description,
-    //             Quantity = p.Quantity,
-    //             Name = p.Name,
-    //             Price = p.Price,
-    //             IsHidden = p.IsHidden,
-    //             CreatedAt = p.CreatedAt,
-    //             ModifiedAt = p.ModifiedAt,
-    //             ProductCategories = p.ProductCategories.Any(pc => pc.ProductId == p.Id) ? p.ProductCategories : null,
-    //             ProductImages = p.ProductImages.Any(pi => pi.ProductId == p.Id) ? p.ProductImages : null,
-    //         },
-    //         predicate: p => p.ProductCategories.Any(pc => pc.CategoryId == categoryId),
-    //         page: page,
-    //         size: size,
-    //         include: p => p.Include(p => p.ProductImages),
-    //         filter: null
-    //     );
-    //     var productResponses = _mapper.Map<IPaginate<GetProductResponse>>(products);
-    //     return productResponses;
-    // }
+    public async Task<IPaginate<GetProductResponse>> GetProductByCategoryIdAsync(Guid categoryId, int page, int size)
+    {
+        if (categoryId == Guid.Empty) throw new BadHttpRequestException(MessageConstant.Category.CategoryIdNotNull);
+    
+        var products = await _unitOfWork.GetRepository<Product>().GetPagingListAsync(
+            selector: p => new Product()
+            {
+                Id = p.Id,
+                Description = p.Description,
+                Quantity = p.Quantity,
+                Name = p.Name,
+                Price = p.Price,
+                IsHidden = p.IsHidden,
+                CreatedAt = p.CreatedAt,
+                ModifiedAt = p.ModifiedAt,
+                ProductCategories = p.ProductCategories.Any(pc => pc.ProductId == p.Id) ? p.ProductCategories : null,
+                ProductImages = p.ProductImages.Any(pi => pi.ProductId == p.Id) ? p.ProductImages : null,
+            },
+            predicate: p => p.ProductCategories.Any(pc => pc.CategoryId == categoryId),
+            page: page,
+            size: size,
+            include: p => p.Include(p => p.ProductImages),
+            filter: null
+        );
+        var productResponses = _mapper.Map<IPaginate<GetProductResponse>>(products);
+        return productResponses;
+    }
     
     // public async Task<GetProductResponse> DeleteProductImageById(Guid id)
     // {

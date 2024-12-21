@@ -20,7 +20,7 @@ public class AuthController : BaseController<AuthController>
     }
 
     [HttpPost(ApiEndPointConstant.Auth.Login)]
-    [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
     {
@@ -34,7 +34,7 @@ public class AuthController : BaseController<AuthController>
         return Ok(loginResponse);
     }
     [HttpPost(ApiEndPointConstant.Auth.Signup)]
-    [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Register([FromBody] SignUpRequest request)
     {
@@ -45,7 +45,7 @@ public class AuthController : BaseController<AuthController>
             return Problem(MessageConstant.User.RegisterFail);
         }
         _logger.LogInformation($"Register successful with {request.Username}");
-        return Ok(response);
+        return CreatedAtAction(nameof(Register), response);
     }
     
     

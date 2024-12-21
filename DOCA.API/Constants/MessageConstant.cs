@@ -34,6 +34,23 @@ public class MessageConstant
         public const string DeleteProductCategoryFailed = "Xóa danh mục sản phẩm không thành công";
     }
     
+    public static class AnimalCategory
+    {
+        public const string  AnimalCategoryIdNotNull = "Id danh mục không được để trống";
+        public const string AnimalCategoryNotFound = "Danh mục không tồn tại";
+        public const string UpdateProductCategoryFail = "Cập nhật danh mục của con vật không thành công";
+        public const string UpdateCategoryFail = "Cập nhật danh mục không thành công";
+        public const string CreateCategoryFail = "Tạo danh mục không thành công";
+        public const string UpdateProductCategoryFailed  = "Cập nhật danh mục con vật không thành công";
+        public const string InsertProductCategoryFailed = "Thêm danh mục con vật không thành công";
+        public const string DeleteProductCategoryFailed = "Xóa danh mục con vật không thành công";
+    }
+    
+    public static class Animal
+    {
+        public const string AnimalNotFound = "Con vật không tồn tại";
+    }
+    
     public static class ProductImage
     {
         public const string ProductImageIdNotNull = "Id ảnh sản phẩm không được để trống";
@@ -44,6 +61,8 @@ public class MessageConstant
         public const string AddProductImageFail = "Thêm ảnh sản phẩm không thành công";
         public const string WrongMainImageQuantity = "Bắt buộc phải có một ảnh chính";
     }
+    
+    
     
 
 }
