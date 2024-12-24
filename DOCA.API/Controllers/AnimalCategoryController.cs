@@ -18,9 +18,11 @@ namespace DOCA.API.Controllers;
 public class AnimalCategoryController : BaseController<AnimalCategoryController>
 {
     private readonly IAnimalCategoryService _animalCategoryService;
-    public AnimalCategoryController(ILogger<AnimalCategoryController> logger, IAnimalCategoryService animalCategoryService) : base(logger)
+    private readonly IAnimalService _animalService;
+    public AnimalCategoryController(ILogger<AnimalCategoryController> logger, IAnimalCategoryService animalCategoryService, IAnimalService animalService) : base(logger)
     {
         _animalCategoryService = animalCategoryService;
+        _animalService = animalService;
     }
     [HttpGet(ApiEndPointConstant.AnimalCategory.CategoryEndPoint)]
     [ProducesResponseType(typeof(IPaginate<AnimalCategoryResponse>), StatusCodes.Status200OK)]
@@ -82,5 +84,12 @@ public class AnimalCategoryController : BaseController<AnimalCategoryController>
         }
         _logger.LogInformation($"Create new animal category successful with {request.Name}");
         return CreatedAtAction(nameof(CreateAnimalCategory), response);
+    }
+    [HttpGet(ApiEndPointConstant.AnimalCategory.AnimalByAnimalCategoryId)]
+    [ProducesResponseType(typeof(IPaginate<GetAnimalResponse>), statusCode: StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAnimalsByAnimalCategoryId(Guid id = new Guid(), int page = 1, int size = 30)
+    {
+        var response = await _animalService.GetAnimalByAnimalCategoryIdAsync(id, page, size);
+        return Ok(response);
     }
 }

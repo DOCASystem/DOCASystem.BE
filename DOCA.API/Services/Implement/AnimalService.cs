@@ -251,8 +251,8 @@ public class AnimalService : BaseService<AnimalService>, IAnimalService
             include: a => a.Include(a => a.AnimalImage),
             filter: null
         );
-        var productResponses = _mapper.Map<IPaginate<GetAnimalResponse>>(animals);
-        return productResponses;
+        var responses = _mapper.Map<IPaginate<GetAnimalResponse>>(animals);
+        return responses;
     }
 
     public async Task<GetAnimalResponse> UpdateAnimalImageByAnimalIdAsync(Guid animalId, ICollection<ImageAnimalRequest> request)

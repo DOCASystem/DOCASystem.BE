@@ -67,10 +67,10 @@ public class AnimalCategoryService : BaseService<AnimalCategoryService>, IAnimal
         );
         if (category == null) throw new BadHttpRequestException(MessageConstant.AnimalCategory.AnimalCategoryNotFound);
 
-        var productCategories = await _unitOfWork.GetRepository<AnimalCategoryRelationship>().GetListAsync(
+        var animalCategories = await _unitOfWork.GetRepository<AnimalCategoryRelationship>().GetListAsync(
             predicate: pc => pc.AnimalCategoryId == categoryId
         );
-        var animalIds = productCategories.Select(pc => pc.AnimalId).ToList();
+        var animalIds = animalCategories.Select(pc => pc.AnimalId).ToList();    
         var newAnimalIds = request.AnimalIds.Except(animalIds).ToList();
         var removeAnimalIds = animalIds.Except(request.AnimalIds).ToList();
         foreach (var newAnimalId in newAnimalIds)

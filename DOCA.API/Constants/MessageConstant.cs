@@ -77,6 +77,23 @@ public class MessageConstant
     }
     
     
+    public static class BlogCategory
+    {
+        public const string BlogCategoryIdNotNull = "Id danh mục không được để trống";
+        public const string BlogCategoryNotFound = "Danh mục không tồn tại";
+        public const string UpdateBlogCategoryFail = "Cập nhật danh mục của blog không thành công";
+        public const string CreateBlogCategoryFail = "Tạo danh mục không thành công";
+        public const string UpdateBlogCategoryFailed  = "Cập nhật danh mục blog không thành công";
+        public const string InsertBlogCategoryFailed = "Thêm danh mục blog không thành công";
+        public const string DeleteBlogCategoryFailed = "Xóa danh mục blog không thành công";
+    }
     
+    public static class Blog
+    {
+        public const string BlogIdNotNull = "Id blog không được để trống";
+        public const string BlogNotFound = "Blog không tồn tại";
+        public const string CreateBlogFail = "Tạo blog không thành công với tên";
+        public const string UpdateBlogFail = "Cập nhật blog không thành công";
+    }
 
 }

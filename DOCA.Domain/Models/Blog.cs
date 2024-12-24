@@ -12,5 +12,5 @@ public class Blog
     public DateTime ModifiedAt { get; set; }
     public bool IsHindden { get; set; }
     
-    public virtual ICollection<BlogAnimal>? BlogAnimals { get; set; }
+    public virtual ICollection<BlogCategoryRelationship>? BlogCategoryRelationship { get; set; }
 }

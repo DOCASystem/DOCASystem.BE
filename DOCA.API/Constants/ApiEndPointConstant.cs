@@ -45,7 +45,7 @@ public class ApiEndPointConstant
         public const string CategoryEndPoint = ApiEndpoint + "/animalCategories";
         public const string CategoryById = CategoryEndPoint + "/{id}";
         public const string UpdateAnimalCategory = CategoryById + "/animal-category";
-        public const string AnimalByCategoryId = CategoryById + "/animal";
+        public const string AnimalByAnimalCategoryId = CategoryById + "/animal";
     }
     
     public class Animal
@@ -53,6 +53,20 @@ public class ApiEndPointConstant
         public const string AnimalEndpoint = ApiEndpoint + "/animals";
         public const string AnimalById = AnimalEndpoint + "/{id}";
         public const string AnimalImage = AnimalById + "/animal-image";
+    }
+    
+    public class BlogCategory
+    {
+        public const string CategoryEndPoint = ApiEndpoint + "/blogCategories";
+        public const string CategoryById = CategoryEndPoint + "/{id}";
+        public const string UpdateAnimalCategory = CategoryById + "/blog-category";
+        public const string BlogByBlogCategoryId = CategoryById + "/blog";
+    }
+    
+    public class Blog
+    {
+        public const string BlogEndpoint = ApiEndpoint + "/blogs";
+        public const string BlogById = BlogEndpoint + "/{id}";
     }
 
 }
