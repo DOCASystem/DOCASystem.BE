@@ -5,7 +5,6 @@ using DOCA.Domain.Paginate;
 using DOCA.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
-using Pos_System.Domain.Paginate;
 
 namespace DOCA.Repository.Implement;
 

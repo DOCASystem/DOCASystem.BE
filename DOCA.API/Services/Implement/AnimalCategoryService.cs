@@ -16,10 +16,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DOCA.API.Services.Implement;
 
-public class AnimalCategoryServive : BaseService<AnimalCategoryServive>, IAnimalCategoryServive
+public class AnimalCategoryService : BaseService<AnimalCategoryService>, IAnimalCategoryService
 {
     private IConfiguration _configuration;
-    public AnimalCategoryServive(IUnitOfWork<DOCADbContext> unitOfWork, ILogger<AnimalCategoryServive> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor, IConfiguration configuration) : base(unitOfWork, logger, mapper, httpContextAccessor)
+    public AnimalCategoryService(IUnitOfWork<DOCADbContext> unitOfWork, ILogger<AnimalCategoryService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor, IConfiguration configuration) : base(unitOfWork, logger, mapper, httpContextAccessor)
     {
         _configuration = configuration;
     }
@@ -57,7 +57,7 @@ public class AnimalCategoryServive : BaseService<AnimalCategoryServive>, IAnimal
         return categoryResponse;
     }
 
-    public async Task<AnimalCategoryResponse> UpdateAnimalCategoryByCategoryIdAsync(Guid categoryId, UpdateAnimalCategoryRelationship request)
+    public async Task<AnimalCategoryResponse> UpdateAnimalCategoryByCategoryIdAsync(Guid categoryId, UpdateAnimalCategoryRelationshipRequest request)
     {
         if(categoryId == Guid.Empty) throw new BadHttpRequestException(MessageConstant.AnimalCategory.AnimalCategoryIdNotNull);
         var category = await _unitOfWork.GetRepository<AnimalCategory>().SingleOrDefaultAsync(

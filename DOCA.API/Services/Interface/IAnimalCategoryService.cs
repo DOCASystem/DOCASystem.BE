@@ -8,13 +8,13 @@ using DOCA.Domain.Paginate;
 
 namespace DOCA.API.Services.Interface;
 
-public interface IAnimalCategoryServive
+public interface IAnimalCategoryService
 {
     Task<IPaginate<AnimalCategoryResponse>> GetAnimalCategoriesPagingAsync(int page, int size, AnimalCategoryFilter? filter);
     
     Task<AnimalCategoryResponse> GetAnimalCategoryByIdAsync(Guid id);
     
-    Task<AnimalCategoryResponse> UpdateAnimalCategoryByCategoryIdAsync(Guid categoryId, UpdateAnimalCategoryRelationship request);
+    Task<AnimalCategoryResponse> UpdateAnimalCategoryByCategoryIdAsync(Guid categoryId, UpdateAnimalCategoryRelationshipRequest request);
     
     Task<AnimalCategoryResponse> UpdateAnimalCategoryAsync(Guid categoryId, UpdateAnimalCategoryRequest request);
     

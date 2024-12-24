@@ -1,11 +1,9 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using DOCA.Domain.Models;
 
-namespace DOCA.Domain.Models;
+namespace DOCA.API.Payload.Response.Animal;
 
-public class Animal
+public class GetAnimalResponse
 {
-    [Key]
     public Guid Id { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
@@ -13,6 +11,5 @@ public class Animal
     public string Sex { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime ModifiedAt { get; set; }
-    public virtual ICollection<AnimalCategoryRelationship>? AnimalCategoryRelationship { get; set; }
     public virtual ICollection<AnimalImage>? AnimalImage { get; set; }
 }

@@ -1,16 +1,17 @@
 using DOCA.Domain.Paginate;
 using Microsoft.EntityFrameworkCore;
-
-namespace Pos_System.Domain.Paginate;
-
+namespace DOCA.Domain.Paginate;
 public static class PaginateExtension
 {
-    public static async Task<IPaginate<T>> ToPaginateAsync<T>(this IQueryable<T> queryable, int page, int size, int firstPage = 1)
+    public static async Task<IPaginate<T>> ToPaginateAsync<T>(this IQueryable<T> query, int page, int size, int firstPage = 1)
     {
         if (firstPage > page)
-            throw new ArgumentException($"page ({page}) must greater or equal than firstPage ({firstPage})");
-        var total = await queryable.CountAsync();
-        var items = await queryable.Skip((page - firstPage) * size).Take(size).ToListAsync();
+        {
+            throw new AggregateException($"page ({page}) must be greater than or equal to firstPage ({firstPage})");
+        }
+
+        var total = await query.CountAsync();
+        var items = await query.Skip((page - firstPage) * size).Take(size).ToListAsync();
         var totalPages = (int)Math.Ceiling(total / (double)size);
         return new Paginate<T>
         {

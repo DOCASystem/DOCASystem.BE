@@ -36,7 +36,7 @@ public class MessageConstant
     
     public static class AnimalCategory
     {
-        public const string  AnimalCategoryIdNotNull = "Id danh mục không được để trống";
+        public const string AnimalCategoryIdNotNull = "Id danh mục không được để trống";
         public const string AnimalCategoryNotFound = "Danh mục không tồn tại";
         public const string UpdateProductCategoryFail = "Cập nhật danh mục của con vật không thành công";
         public const string UpdateCategoryFail = "Cập nhật danh mục không thành công";
@@ -49,6 +49,9 @@ public class MessageConstant
     public static class Animal
     {
         public const string AnimalNotFound = "Con vật không tồn tại";
+        public const string AnimalIdNotNull = "Id con vật không được để trống";
+        public const string CreateAnimalFail = "Tạo con vật không thành công với tên";
+        public const string UpdateAnimalFail = "Cập nhật con vật không thành công";
     }
     
     public static class ProductImage
@@ -59,6 +62,17 @@ public class MessageConstant
         public const string MainImageExist = "Ảnh chính đã tồn tại";
         public const string UploadImageFail = "Upload ảnh không thành công";
         public const string AddProductImageFail = "Thêm ảnh sản phẩm không thành công";
+        public const string WrongMainImageQuantity = "Bắt buộc phải có một ảnh chính";
+    }
+    
+    public static class AnimalImage
+    {
+        public const string AnimalImageIdNotNull = "Id ảnh con vật không được để trống";
+        public const string AnimalImageNotFound = "Ảnh con vật không tồn tại";
+        public const string DeleteAnimalImageFail = "Xóa ảnh con vật không thành công";
+        public const string MainImageExist = "Ảnh chính đã tồn tại";
+        public const string UploadImageFail = "Upload ảnh không thành công";
+        public const string AddAnimalImageFail = "Thêm ảnh con vật không thành công";
         public const string WrongMainImageQuantity = "Bắt buộc phải có một ảnh chính";
     }
     

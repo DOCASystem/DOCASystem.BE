@@ -1,4 +1,5 @@
 using AutoMapper;
+using DOCA.API.Payload.Request.Product;
 using DOCA.API.Payload.Response.Product;
 using DOCA.Domain.Models;
 
@@ -8,6 +9,7 @@ public class ProductMapper : Profile
 {
     public ProductMapper()
     {
+        CreateMap<CreateProductRequest, Product>();
         CreateMap<Product, GetProductDetailResponse>()
             .ForMember(dest => dest.Categories, 
                 opt => opt.MapFrom(src => src.ProductCategories!.Select(pc => pc.Category)))

@@ -47,4 +47,12 @@ public class ApiEndPointConstant
         public const string UpdateAnimalCategory = CategoryById + "/animal-category";
         public const string AnimalByCategoryId = CategoryById + "/animal";
     }
+    
+    public class Animal
+    {
+        public const string AnimalEndpoint = ApiEndpoint + "/animals";
+        public const string AnimalById = AnimalEndpoint + "/{id}";
+        public const string AnimalImage = AnimalById + "/animal-image";
+    }
+
 }

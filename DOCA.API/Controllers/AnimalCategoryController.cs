@@ -17,32 +17,32 @@ namespace DOCA.API.Controllers;
 [Route(ApiEndPointConstant.AnimalCategory.CategoryEndPoint)]
 public class AnimalCategoryController : BaseController<AnimalCategoryController>
 {
-    private readonly IAnimalCategoryServive _animalCategoryServive;
-    public AnimalCategoryController(ILogger<AnimalCategoryController> logger, IAnimalCategoryServive animalCategoryServive) : base(logger)
+    private readonly IAnimalCategoryService _animalCategoryService;
+    public AnimalCategoryController(ILogger<AnimalCategoryController> logger, IAnimalCategoryService animalCategoryService) : base(logger)
     {
-        _animalCategoryServive = animalCategoryServive;
+        _animalCategoryService = animalCategoryService;
     }
     [HttpGet(ApiEndPointConstant.AnimalCategory.CategoryEndPoint)]
     [ProducesResponseType(typeof(IPaginate<AnimalCategoryResponse>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAnimalCategoriesPagingAsync(int page = 1, int size = 30, [FromQuery] AnimalCategoryFilter filter = null)
     {
-        var categories = await _animalCategoryServive.GetAnimalCategoriesPagingAsync(page, size, filter);
+        var categories = await _animalCategoryService.GetAnimalCategoriesPagingAsync(page, size, filter);
         return Ok(categories);
     }
     [HttpGet(ApiEndPointConstant.AnimalCategory.CategoryById)]
     [ProducesResponseType(typeof(AnimalCategoryResponse), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAnimalCategoryByIdAsync(Guid id)
     {
-        var category = await _animalCategoryServive.GetAnimalCategoryByIdAsync(id);
+        var category = await _animalCategoryService.GetAnimalCategoryByIdAsync(id);
         return Ok(category);
     }
     [HttpPatch(ApiEndPointConstant.AnimalCategory.UpdateAnimalCategory)]
     [ProducesResponseType(typeof(AnimalCategoryResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), statusCode: StatusCodes.Status500InternalServerError)]
     [CustomAuthorize(RoleEnum.Manager, RoleEnum.Staff)]
-    public async Task<IActionResult> UpdateAnimalCategoryByCategoryIdAsync(Guid id, [FromBody] UpdateAnimalCategoryRelationship request)
+    public async Task<IActionResult> UpdateAnimalCategoryByCategoryIdAsync(Guid id, [FromBody] UpdateAnimalCategoryRelationshipRequest request)
     {
-        var response = await _animalCategoryServive.UpdateAnimalCategoryByCategoryIdAsync(id, request);
+        var response = await _animalCategoryService.UpdateAnimalCategoryByCategoryIdAsync(id, request);
         if (response == null)
         {
             _logger.LogError($"Update animal category failed with {id}");
@@ -58,7 +58,7 @@ public class AnimalCategoryController : BaseController<AnimalCategoryController>
     [CustomAuthorize(RoleEnum.Manager, RoleEnum.Staff)]
     public async Task<IActionResult> UpdateAnimalCategoryAsync(Guid id, [FromBody] UpdateAnimalCategoryRequest request)
     {
-        var response = await _animalCategoryServive.UpdateAnimalCategoryAsync(id, request);
+        var response = await _animalCategoryService.UpdateAnimalCategoryAsync(id, request);
         if (response == null)
         {
             _logger.LogError($"Update animal category failed with {id}");
@@ -74,7 +74,7 @@ public class AnimalCategoryController : BaseController<AnimalCategoryController>
     [CustomAuthorize(RoleEnum.Manager, RoleEnum.Staff)]
     public async Task<IActionResult> CreateAnimalCategory([FromBody] CreateAnimalCategoryRequest request)
     {
-        var response = await _animalCategoryServive.CreateAnimalCategoryAsync(request);
+        var response = await _animalCategoryService.CreateAnimalCategoryAsync(request);
         if (response == null)
         {
             _logger.LogError($"Create new animal category failed with {request.Name}");

@@ -41,6 +41,11 @@ public static class DependencyService
     public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IAnimalService, AnimalService>();
+        services.AddScoped<IProductService, ProductService>();
+        services.AddScoped<ICategoryService, CategoryService>();
+        services.AddScoped<IAnimalCategoryService, AnimalCategoryService>();
+        // services.AddScoped<IRedisService, RedisService>();
         return services;
     }
 
