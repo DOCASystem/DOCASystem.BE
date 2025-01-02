@@ -19,12 +19,12 @@ public class AnimalService : BaseService<AnimalService>, IAnimalService
 {
     private IConfiguration _configuration;
     // private IFirebaseService _firebaseService;
-    // private IRedisService _redisService;
+    private IRedisService _redisService;
     public AnimalService(IUnitOfWork<DOCADbContext> unitOfWork, ILogger<AnimalService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor, IConfiguration configuration, IRedisService redisService) : base(unitOfWork, logger, mapper, httpContextAccessor, configuration)
     {
         _configuration = configuration;
         // _firebaseService = firebaseService;
-        // _redisService = redisService;
+        _redisService = redisService;
     }
 
     public async Task<IPaginate<GetAnimalDetailResponse>> GetAllAnimalPagingAsync(int page, int size, AnimalFilter? filter, string? sortBy, bool isAsc)

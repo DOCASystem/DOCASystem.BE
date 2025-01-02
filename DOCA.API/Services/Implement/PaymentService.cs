@@ -19,11 +19,11 @@ namespace DOCA.API.Services.Implement;
 public class PaymentService : BaseService<PaymentService>, IPaymentService
 {
     private IConfiguration _configuration;
-    // private readonly IRedisService _redisService;
+    private readonly IRedisService _redisService;
     public PaymentService(IUnitOfWork<DOCADbContext> unitOfWork, ILogger<PaymentService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor, IConfiguration configuration, IRedisService redisService) : base(unitOfWork, logger, mapper, httpContextAccessor, configuration)
     {
         _configuration = configuration;
-        // _redisService = redisService;
+        _redisService = redisService;
     }
 
     public async Task<string> CheckOut(CheckOutRequest request)
@@ -43,11 +43,11 @@ public class PaymentService : BaseService<PaymentService>, IPaymentService
             throw new BadHttpRequestException(MessageConstant.User.MemberAddressNotFound);
         
         var key = "Cart:" + userId;
-        // var cartData = await _redisService.GetStringAsync(key);
+        var cartData = await _redisService.GetStringAsync(key);
 
-        // if (string.IsNullOrEmpty(cartData)) throw new BadHttpRequestException(MessageConstant.Cart.CartNotFound);
-        //
-        // var cart = JsonConvert.DeserializeObject<List<CartModelResponse>>(cartData);
+        if (string.IsNullOrEmpty(cartData)) throw new BadHttpRequestException(MessageConstant.Cart.CartNotFound);
+        
+        var cart = JsonConvert.DeserializeObject<List<CartModelResponse>>(cartData);
         
         int orderCode = int.Parse(DateTimeOffset.Now.ToString("ffffff"));
         var order = new Order()
@@ -64,44 +64,44 @@ public class PaymentService : BaseService<PaymentService>, IPaymentService
         decimal orderTotal = 0;
         List<ItemData> items = new List<ItemData>();
         
-        // foreach (var cartModel in cart)
-        // {
-        //
-        //     var product = await _unitOfWork.GetRepository<Product>().SingleOrDefaultAsync(
-        //         predicate: x => x.Id == cartModel.ProductId,
-        //         include: p => p
-        //             .Include(p => p.ProductImages)
-        //             .Include(p => p.ProductCategories)
-        //             .ThenInclude(pc => pc.Category)
-        //     );
-        //     var blog = await _unitOfWork.GetRepository<Blog>().SingleOrDefaultAsync(
-        //         predicate: x => x.Id == cartModel.BlogId,
-        //         include: b => b
-        //             .Include(b => b.BlogCategoryRelationship)
-        //             .ThenInclude(b => b.BlogCategory)
-        //             .Include(b => b.BlogAnimal)
-        //             .ThenInclude(b => b.Animal)
-        //     );
-        //     if (product.Quantity < cartModel.Quantity) throw new BadHttpRequestException(MessageConstant.Product.ProductOutOfStock);
-        //     var orderItem = new OrderItem()
-        //     {
-        //         Id = Guid.NewGuid(),
-        //         ProductId = product.Id,
-        //         BlogID = blog.Id,
-        //         Quantity = cartModel.Quantity,
-        //         CreatedAt = TimeUtil.GetCurrentSEATime(),
-        //         ModifiedAt =TimeUtil.GetCurrentSEATime(),
-        //         Order = order,
-        //         WarrantyCode = CodeUtil.GenerateWarrantyCode(product.Id),
-        //         WarrantyExpired = null
-        //     };
-        //     orderItems.Add(orderItem);
-        //     
-        //     decimal itemTotal = product.Price * cartModel.Quantity;
-        //     orderTotal += itemTotal;
-        //     var item = new ItemData(product.Name, cartModel.Quantity, (int) itemTotal);
-        //     items.Add(item);
-        // }
+        foreach (var cartModel in cart)
+        {
+        
+            var product = await _unitOfWork.GetRepository<Product>().SingleOrDefaultAsync(
+                predicate: x => x.Id == cartModel.ProductId,
+                include: p => p
+                    .Include(p => p.ProductImages)
+                    .Include(p => p.ProductCategories)
+                    .ThenInclude(pc => pc.Category)
+            );
+            var blog = await _unitOfWork.GetRepository<Blog>().SingleOrDefaultAsync(
+                predicate: x => x.Id == cartModel.BlogId,
+                include: b => b
+                    .Include(b => b.BlogCategoryRelationship)
+                    .ThenInclude(b => b.BlogCategory)
+                    .Include(b => b.BlogAnimal)
+                    .ThenInclude(b => b.Animal)
+            );
+            if (product.Quantity < cartModel.Quantity) throw new BadHttpRequestException(MessageConstant.Product.ProductOutOfStock);
+            var orderItem = new OrderItem()
+            {
+                Id = Guid.NewGuid(),
+                ProductId = product.Id,
+                BlogID = blog.Id,
+                Quantity = cartModel.Quantity,
+                CreatedAt = TimeUtil.GetCurrentSEATime(),
+                ModifiedAt =TimeUtil.GetCurrentSEATime(),
+                Order = order,
+                WarrantyCode = CodeUtil.GenerateWarrantyCode(product.Id),
+                WarrantyExpired = null
+            };
+            orderItems.Add(orderItem);
+            
+            decimal itemTotal = product.Price * cartModel.Quantity;
+            orderTotal += itemTotal;
+            var item = new ItemData(product.Name, cartModel.Quantity, (int) itemTotal);
+            items.Add(item);
+        }
 
         order.Total = orderTotal;
         order.Address = request.Address;
@@ -119,18 +119,18 @@ public class PaymentService : BaseService<PaymentService>, IPaymentService
         {
             try
             {
-                // foreach (var cartModel in cart)
-                // {
-                //     var productCarts = await _unitOfWork.GetRepository<Product>().SingleOrDefaultAsync(
-                //         predicate: x => x.Id == cartModel.ProductId,
-                //         include: p => p
-                //             .Include(p => p.ProductImages)
-                //             .Include(p => p.ProductCategories)
-                //             .ThenInclude(pc => pc.Category)
-                //     );
-                //     productCarts.Quantity -= cartModel.Quantity;
-                //     _unitOfWork.GetRepository<Product>().UpdateAsync(productCarts);
-                // }
+                foreach (var cartModel in cart)
+                {
+                    var productCarts = await _unitOfWork.GetRepository<Product>().SingleOrDefaultAsync(
+                        predicate: x => x.Id == cartModel.ProductId,
+                        include: p => p
+                            .Include(p => p.ProductImages)
+                            .Include(p => p.ProductCategories)
+                            .ThenInclude(pc => pc.Category)
+                    );
+                    productCarts.Quantity -= cartModel.Quantity;
+                    _unitOfWork.GetRepository<Product>().UpdateAsync(productCarts);
+                }
                 await _unitOfWork.GetRepository<Order>().InsertAsync(order);
                 await _unitOfWork.GetRepository<Payment>().InsertAsync(payment);
                 
@@ -225,7 +225,6 @@ public class PaymentService : BaseService<PaymentService>, IPaymentService
                         payment.ModifiedAt = TimeUtil.GetCurrentSEATime();
                         payment.Order.Status = OrderStatus.Cancelled;
                         payment.Order.ModifiedAt = TimeUtil.GetCurrentSEATime();
-                        // _unitOfWork.GetRepository<Payment>().UpdateAsync(payment);
                         _unitOfWork.GetRepository<Payment>().UpdateAsync(payment);
                         var orderItems = await _unitOfWork.GetRepository<OrderItem>().GetListAsync(
                             predicate: oi => oi.OrderId == payment.Order.Id,

@@ -54,7 +54,7 @@ public static class DependencyService
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IAnimalCategoryService, AnimalCategoryService>();
-        // services.AddScoped<IRedisService, RedisService>();
+        services.AddScoped<IRedisService, RedisService>();
         services.AddScoped<IBlogService, BlogService>();
         services.AddScoped<IBlogCategoryService, BlogCategoryService>();
         services.AddScoped<ICartService, CartService>();
