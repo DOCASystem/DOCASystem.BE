@@ -19,7 +19,7 @@ namespace DOCA.API.Services.Implement;
 public class AnimalCategoryService : BaseService<AnimalCategoryService>, IAnimalCategoryService
 {
     private IConfiguration _configuration;
-    public AnimalCategoryService(IUnitOfWork<DOCADbContext> unitOfWork, ILogger<AnimalCategoryService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor, IConfiguration configuration) : base(unitOfWork, logger, mapper, httpContextAccessor)
+    public AnimalCategoryService(IUnitOfWork<DOCADbContext> unitOfWork, ILogger<AnimalCategoryService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor, IConfiguration configuration) : base(unitOfWork, logger, mapper, httpContextAccessor,configuration)
     {
         _configuration = configuration;
     }

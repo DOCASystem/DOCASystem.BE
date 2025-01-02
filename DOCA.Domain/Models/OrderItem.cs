@@ -15,6 +15,9 @@ public class OrderItem
     public Guid OrderId { get; set; }
     [ForeignKey(nameof(OrderId))]
     public Order Order { get; set; }
+    public Guid BlogID { get; set; }
+    [ForeignKey(nameof(BlogID))]
+    public Blog Blog { get; set; }
     public Guid ProductId { get; set; }
     [ForeignKey(nameof(ProductId))]
     public Product Product { get; set; }

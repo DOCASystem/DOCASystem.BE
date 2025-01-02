@@ -11,6 +11,7 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.Google;
+using StackExchange.Redis;
 
 namespace DOCA.API.Extensions;
 
@@ -32,6 +33,14 @@ public static class DependencyService
         
         return service;
     }
+    public static IServiceCollection AddRedis(this IServiceCollection service)
+    {
+        IConfiguration configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true).Build();
+        service.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(configuration.GetConnectionString("Redis")));
+        service.AddScoped<IRedisService, RedisService>();
+        return service;
+    }
     private static string CreateConnectionString(IConfiguration configuration)
     {
         var connectionString = configuration.GetValue<string>("ConnectionStrings:MyConnectionString");
@@ -46,6 +55,12 @@ public static class DependencyService
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<IAnimalCategoryService, AnimalCategoryService>();
         // services.AddScoped<IRedisService, RedisService>();
+        services.AddScoped<IBlogService, BlogService>();
+        services.AddScoped<IBlogCategoryService, BlogCategoryService>();
+        services.AddScoped<ICartService, CartService>();
+        // services.AddScoped<IFirebaseService, FirebaseService>();
+        services.AddScoped<IOrderService, OrderService>();
+        services.AddScoped<IPaymentService, PaymentService>();
         return services;
     }
 

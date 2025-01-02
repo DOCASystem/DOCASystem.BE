@@ -3,6 +3,7 @@ using AutoMapper;
 using DOCA.API.Constants;
 using DOCA.API.Enums;
 using DOCA.API.Payload.Request.Product;
+using DOCA.API.Payload.Response.Cart;
 using DOCA.API.Payload.Response.Product;
 using DOCA.API.Services.Interface;
 using DOCA.API.Utils;
@@ -11,18 +12,23 @@ using DOCA.Domain.Models;
 using DOCA.Domain.Paginate;
 using DOCA.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace DOCA.API.Services.Implement;
 
 public class ProductService : BaseService<ProductService>, IProductService
 {
     private IConfiguration _configuration;
+    // private readonly IFirebaseService _firebaseService;
+    // private readonly IRedisService _redisService;
 
     public ProductService(IUnitOfWork<DOCADbContext> unitOfWork, ILogger<ProductService> logger, IMapper mapper,
-        IHttpContextAccessor httpContextAccessor, IConfiguration configuration) : base(unitOfWork, logger, mapper,
-        httpContextAccessor)
+        IHttpContextAccessor httpContextAccessor, IConfiguration configuration, IRedisService redisService) : base(unitOfWork, logger, mapper,
+        httpContextAccessor, configuration)
     {
         _configuration = configuration;
+        // _firebaseService = firebaseService;
+        // _redisService = redisService;
     }
 
     public async Task<IPaginate<GetProductDetailResponse>> GetAllProductPagingAsync(int page, int size,
@@ -118,7 +124,7 @@ public class ProductService : BaseService<ProductService>, IProductService
                 // var mainImageUrl = await _firebaseService.UploadFileToFirebaseAsync(request.MainImage);
                 // if (!string.IsNullOrEmpty(mainImageUrl))
                 // {
-                //     await _productImageRepository.InsertAsync(new ProductImage()
+                //     await _unitOfWork.GetRepository<ProductImage>().InsertAsync(new ProductImage()
                 //     {
                 //         Id = Guid.NewGuid(),
                 //         ProductId = product.Id,
@@ -134,7 +140,7 @@ public class ProductService : BaseService<ProductService>, IProductService
                 //     {
                 //         foreach (var imageUrl in imageUrls)
                 //         {
-                //             await _productImageRepository.InsertAsync(new ProductImage()
+                //             await _unitOfWork.GetRepository<ProductImage>().InsertAsync(new ProductImage()
                 //             {
                 //                 Id = Guid.NewGuid(),
                 //                 ProductId = product.Id,
@@ -191,37 +197,37 @@ public class ProductService : BaseService<ProductService>, IProductService
                     // var cartKeys = await _redisService.GetListAsync("AllCartKeys");
                     // if (cartKeys.Any())
                     // {
-                    //     foreach (var cartKey in cartKeys)
-                    //     {
-                    //         var cartJson = await _redisService.GetStringAsync(cartKey);
-                    //         var cart = JsonConvert.DeserializeObject<List<CartModelResponse>>(cartJson);
-                    //         foreach (var cartItem in cart)
-                    //         {
-                    //             if (cartItem.ProductId == product.Id)
-                    //             {
-                    //                 
-                    //                 if (cartItem.Quantity > product.Quantity || product.IsHidden)
-                    //                 {
-                    //                     cart.Remove(cartItem);
-                    //                     break;
-                    //                 }
-                    //                 cartItem.Name = product.Name;
-                    //                 cartItem.Description = product.Description;
-                    //                 cartItem.Price = product.Price;
-                    //                 cartItem.MainImage = product.ProductImages?.Where(pi => pi.IsMain == true).FirstOrDefault()?.ImageUrl;
-                    //                 cartItem.ProductQuantity = product.Quantity;
-                    //             }
-                    //         }
-                    //         if (!cart.Any())
-                    //         {
-                    //             await _redisService.RemoveKeyAsync(cartKey);
-                    //             await _redisService.RemoveFromListAsync("AllCartKeys", cartKey);
-                    //         }
-                    //         else
-                    //         {
-                    //             await _redisService.SetStringAsync(cartKey, JsonConvert.SerializeObject(cart));
-                    //         }
-                    //     }
+                        // foreach (var cartKey in cartKeys)
+                        // {
+                        //     var cartJson = await _redisService.GetStringAsync(cartKey);
+                        //     var cart = JsonConvert.DeserializeObject<List<CartModelResponse>>(cartJson);
+                        //     foreach (var cartItem in cart)
+                        //     {
+                        //         if (cartItem.ProductId == product.Id)
+                        //         {
+                        //             
+                        //             if (cartItem.Quantity > product.Quantity || product.IsHidden)
+                        //             {
+                        //                 cart.Remove(cartItem);
+                        //                 break;
+                        //             }
+                        //             cartItem.ProductName = product.Name;
+                        //             cartItem.ProductDescription = product.Description;
+                        //             cartItem.Price = product.Price;
+                        //             cartItem.MainImage = product.ProductImages?.Where(pi => pi.IsMain == true).FirstOrDefault()?.ImageUrl;
+                        //             cartItem.ProductQuantity = product.Quantity;
+                        //         }
+                        //     }
+                        //     if (!cart.Any())
+                        //     {
+                        //         await _redisService.RemoveKeyAsync(cartKey);
+                        //         await _redisService.RemoveFromListAsync("AllCartKeys", cartKey);
+                        //     }
+                        //     else
+                        //     {
+                        //         await _redisService.SetStringAsync(cartKey, JsonConvert.SerializeObject(cart));
+                        //     }
+                        // }
                     // }
                 }
                 return productResponse;

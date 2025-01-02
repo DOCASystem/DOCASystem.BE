@@ -68,5 +68,27 @@ public class ApiEndPointConstant
         public const string BlogEndpoint = ApiEndpoint + "/blogs";
         public const string BlogById = BlogEndpoint + "/{id}";
     }
+    
+    public class Order
+    {
+        public const string OrderEndpoint = ApiEndpoint + "/orders";
+        public const string OrderById = OrderEndpoint + "/{id}";
+        public const string UpdateOrderStatus = OrderById + "/status";
+        public const string UpdateSupportOrderStatusSuccess = UpdateOrderStatus + "/success";
+        public const string UpdateSupportOrderStatusRefuse = UpdateOrderStatus + "/refuse";
+        public const string UpdateSupportOrderStatusShipping = UpdateOrderStatus + "/shipping";
+        public const string OrderItems = OrderById + "/order-items";
+    }
+    
+    public class Cart
+    {
+        public const string CartEndPoint = ApiEndpoint + "/carts";
+    }
+    
+    public class Payment
+    {
+        public const string PaymentEndPoint = ApiEndpoint + "/payments";
+        public const string PaymentCheckOut = PaymentEndPoint + "/checkout";
+    }
 
 }

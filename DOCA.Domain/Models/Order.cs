@@ -1,14 +1,15 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using DOCA.API.Enums;
 
 namespace DOCA.Domain.Models;
 
 public class Order
 {
     [Key]
-    public Guid id { get; set; }
+    public Guid Id { get; set; }
     public decimal Total { get; set; }
-    public int Status { get; set; }
+    public OrderStatus  Status { get; set; }
     public string Code { get; set; }
     [MaxLength(1000)]
     public string Address { get; set; }

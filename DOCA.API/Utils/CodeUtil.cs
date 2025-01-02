@@ -11,4 +11,8 @@ public class CodeUtil
         number++;
         return start + number.ToString().PadLeft(2, '0');
     }
+    public static string GenerateWarrantyCode(Guid productId)
+    {
+        return $"{productId:N}-{DateTime.Now.Ticks}-{Guid.NewGuid().ToString().Substring(0, 8)}";
+    }
 }

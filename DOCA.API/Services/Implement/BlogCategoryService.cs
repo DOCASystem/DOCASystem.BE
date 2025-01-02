@@ -17,7 +17,7 @@ namespace DOCA.API.Services.Implement;
 public class BlogCategoryService : BaseService<BlogCategoryService>, IBlogCategoryService
 {
     private IConfiguration _configuration;
-    public BlogCategoryService(IUnitOfWork<DOCADbContext> unitOfWork, ILogger<BlogCategoryService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor, IConfiguration configuration) : base(unitOfWork, logger, mapper, httpContextAccessor)
+    public BlogCategoryService(IUnitOfWork<DOCADbContext> unitOfWork, ILogger<BlogCategoryService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor, IConfiguration configuration) : base(unitOfWork, logger, mapper, httpContextAccessor, configuration)
     {
         _configuration = configuration;
     }

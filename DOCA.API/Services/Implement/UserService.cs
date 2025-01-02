@@ -20,9 +20,11 @@ namespace DOCA.API.Services.Implement;
 public class UserService : BaseService<UserService>, IUserService
 {
     private IConfiguration _configuration;
-    public UserService(IUnitOfWork<DOCADbContext> unitOfWork, ILogger<UserService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor, IConfiguration configuration) : base(unitOfWork, logger, mapper, httpContextAccessor)
+    // private readonly IRedisService _redisService;
+    public UserService(IUnitOfWork<DOCADbContext> unitOfWork, ILogger<UserService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor, IConfiguration configuration, IRedisService redisService) : base(unitOfWork, logger, mapper, httpContextAccessor, configuration)
     {
         _configuration = configuration;
+        // _redisService = _redisService;
     }
 
     public async Task<LoginResponse> LoginAsync(LoginRequest request)

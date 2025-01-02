@@ -7,8 +7,8 @@ using FluentValidation.AspNetCore;
 var logger = NLog.LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"))
     .GetCurrentClassLogger();
 
-try
-{
+// try
+// {
     var builder = WebApplication.CreateBuilder(args);
 
 
@@ -23,7 +23,7 @@ try
         hostOptions.BackgroundServiceExceptionBehavior = BackgroundServiceExceptionBehavior.Ignore;
     });
     builder.Services.AddDatabase();
-    // builder.Services.AddRedis();
+    builder.Services.AddRedis();
     builder.Services.AddUnitOfWork();
     builder.Services.AddServices(builder.Configuration);
     builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -56,12 +56,12 @@ try
 
     logger.Info("Starting application...");
     app.Run();
-}
-catch (Exception e)
-{
-    logger.Error("Stop program because of error: " + e.Message);
-}
-finally
-{
-    NLog.LogManager.Shutdown();
-}
+// }
+// catch (Exception e)
+// {
+//     logger.Error("Stop program because of error: " + e.Message);
+// }
+// finally
+// {
+//     NLog.LogManager.Shutdown();
+// }

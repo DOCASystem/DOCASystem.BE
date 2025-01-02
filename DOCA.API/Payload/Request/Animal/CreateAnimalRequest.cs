@@ -15,6 +15,6 @@ public class CreateAnimalRequest
     public List<Guid>? AnimalcategoryIds { get; set; }
     [Required]
     public string MainImage { get; set; }
-    public List<string>? SecondImage { get; set; }
+    public List<string>? SecondaryImages { get; set; }
     
 }

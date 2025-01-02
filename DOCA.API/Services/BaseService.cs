@@ -12,14 +12,16 @@ public class BaseService<T> where T : class
     protected ILogger<T> _logger;
     protected IMapper _mapper;
     protected IHttpContextAccessor _httpContextAccessor;
+    protected IConfiguration _configuration;
     
     public BaseService(IUnitOfWork<DOCADbContext> unitOfWork, ILogger<T> logger, IMapper mapper,
-        IHttpContextAccessor httpContextAccessor)
+        IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
     {
         _unitOfWork = unitOfWork;
         _logger = logger;
         _mapper = mapper;
         _httpContextAccessor = httpContextAccessor;
+        _configuration = configuration;
     }
     protected RoleEnum GetRoleFromJwt()
     {

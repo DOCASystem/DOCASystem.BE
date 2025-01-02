@@ -18,9 +18,13 @@ namespace DOCA.API.Services.Implement;
 public class AnimalService : BaseService<AnimalService>, IAnimalService
 {
     private IConfiguration _configuration;
-    public AnimalService(IUnitOfWork<DOCADbContext> unitOfWork, ILogger<AnimalService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor, IConfiguration configuration) : base(unitOfWork, logger, mapper, httpContextAccessor)
+    // private IFirebaseService _firebaseService;
+    // private IRedisService _redisService;
+    public AnimalService(IUnitOfWork<DOCADbContext> unitOfWork, ILogger<AnimalService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor, IConfiguration configuration, IRedisService redisService) : base(unitOfWork, logger, mapper, httpContextAccessor, configuration)
     {
         _configuration = configuration;
+        // _firebaseService = firebaseService;
+        // _redisService = redisService;
     }
 
     public async Task<IPaginate<GetAnimalDetailResponse>> GetAllAnimalPagingAsync(int page, int size, AnimalFilter? filter, string? sortBy, bool isAsc)
@@ -113,14 +117,14 @@ public class AnimalService : BaseService<AnimalService>, IAnimalService
                 // var mainImageUrl = await _firebaseService.UploadFileToFirebaseAsync(request.MainImage);
                 // if (!string.IsNullOrEmpty(mainImageUrl))
                 // {
-                //     await _productImageRepository.InsertAsync(new ProductImage()
+                //     await _unitOfWork.GetRepository<AnimalImage>().InsertAsync(new AnimalImage()
                 //     {
                 //         Id = Guid.NewGuid(),
-                //         ProductId = product.Id,
+                //         AnimalId = animal.Id,
                 //         ImageUrl = mainImageUrl,
                 //         IsMain = true
                 //     });
-                // }
+                // }   
 
                 // if (request.SecondaryImages != null)
                 // {
@@ -129,10 +133,10 @@ public class AnimalService : BaseService<AnimalService>, IAnimalService
                 //     {
                 //         foreach (var imageUrl in imageUrls)
                 //         {
-                //             await _productImageRepository.InsertAsync(new ProductImage()
+                //             await _unitOfWork.GetRepository<AnimalImage>().InsertAsync(new AnimalImage()
                 //             {
                 //                 Id = Guid.NewGuid(),
-                //                 ProductId = product.Id,
+                //                 AnimalId = animal.Id,
                 //                 ImageUrl = imageUrl,
                 //                 IsMain = false
                 //             });
@@ -182,41 +186,6 @@ public class AnimalService : BaseService<AnimalService>, IAnimalService
                 if (isSuccess)
                 {
                     animalResponse = _mapper.Map<GetAnimalResponse>(animal);
-                    // var cartKeys = await _redisService.GetListAsync("AllCartKeys");
-                    // if (cartKeys.Any())
-                    // {
-                    //     foreach (var cartKey in cartKeys)
-                    //     {
-                    //         var cartJson = await _redisService.GetStringAsync(cartKey);
-                    //         var cart = JsonConvert.DeserializeObject<List<CartModelResponse>>(cartJson);
-                    //         foreach (var cartItem in cart)
-                    //         {
-                    //             if (cartItem.ProductId == product.Id)
-                    //             {
-                    //                 
-                    //                 if (cartItem.Quantity > product.Quantity || product.IsHidden)
-                    //                 {
-                    //                     cart.Remove(cartItem);
-                    //                     break;
-                    //                 }
-                    //                 cartItem.Name = product.Name;
-                    //                 cartItem.Description = product.Description;
-                    //                 cartItem.Price = product.Price;
-                    //                 cartItem.MainImage = product.ProductImages?.Where(pi => pi.IsMain == true).FirstOrDefault()?.ImageUrl;
-                    //                 cartItem.ProductQuantity = product.Quantity;
-                    //             }
-                    //         }
-                    //         if (!cart.Any())
-                    //         {
-                    //             await _redisService.RemoveKeyAsync(cartKey);
-                    //             await _redisService.RemoveFromListAsync("AllCartKeys", cartKey);
-                    //         }
-                    //         else
-                    //         {
-                    //             await _redisService.SetStringAsync(cartKey, JsonConvert.SerializeObject(cart));
-                    //         }
-                    //     }
-                    // }
                 }
                 return animalResponse;
             }
@@ -288,28 +257,28 @@ public class AnimalService : BaseService<AnimalService>, IAnimalService
                     );
                     _unitOfWork.GetRepository<AnimalImage>().DeleteAsync(animalImage);
                 }
-                // foreach (var imageProduct in request)
+                // foreach (var imageAnimal in request)
                 // {
-                //     if (imageProduct.Id == null)
+                //     if (imageAnimal.Id == null)
                 //     {
-                //         var imageUrl = await _firebaseService.UploadFileToFirebaseAsync(imageProduct.ImageUrl);
+                //         var imageUrl = await _firebaseService.UploadFileToFirebaseAsync(imageAnimal.ImageUrl);
                 //         if (string.IsNullOrEmpty(imageUrl))
                 //             throw new BadHttpRequestException(MessageConstant.ProductImage.UploadImageFail);
-                //         var newProductImage = new ProductImage()
+                //         var newAnimalImage = new AnimalImage()
                 //         {
                 //             Id = Guid.NewGuid(),
-                //             IsMain = imageProduct.IsMain,
+                //             IsMain = imageAnimal.IsMain,
                 //             ImageUrl = imageUrl,
-                //             ProductId = product.Id
+                //             AnimalId = animal.Id
                 //         };
-                //         await _productImageRepository.InsertAsync(newProductImage);
+                //         await _unitOfWork.GetRepository<AnimalImage>().InsertAsync(newAnimalImage);
                 //     }
                 //     else
                 //     {
-                //         var productImage = _mapper.Map<ProductImage>(imageProduct);
-                //         productImage.Id = imageProduct.Id!.Value;
-                //         productImage.ProductId = product.Id;
-                //         _productImageRepository.UpdateAsync(productImage);
+                //         var animalImage = _mapper.Map<AnimalImage>(imageAnimal);
+                //         animalImage.Id = imageAnimal.Id!.Value;
+                //         animalImage.AnimalId = animal.Id;
+                //         _unitOfWork.GetRepository<AnimalImage>().UpdateAsync(animalImage);
                 //     }
                 // }
                 bool isSuccess = await _unitOfWork.CommitAsync() > 0;

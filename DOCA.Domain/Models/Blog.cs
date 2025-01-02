@@ -13,4 +13,6 @@ public class Blog
     public bool IsHindden { get; set; }
     
     public virtual ICollection<BlogCategoryRelationship>? BlogCategoryRelationship { get; set; }
+    public virtual ICollection<BlogAnimal>? BlogAnimal { get; set; }
+
 }

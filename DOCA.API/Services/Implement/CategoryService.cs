@@ -17,7 +17,7 @@ namespace DOCA.API.Services.Implement;
 public class CategoryService : BaseService<CategoryService>, ICategoryService
 {
     private IConfiguration _configuration;
-    public CategoryService(IUnitOfWork<DOCADbContext> unitOfWork, ILogger<CategoryService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor, IConfiguration configuration) : base(unitOfWork, logger, mapper, httpContextAccessor)
+    public CategoryService(IUnitOfWork<DOCADbContext> unitOfWork, ILogger<CategoryService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor, IConfiguration configuration) : base(unitOfWork, logger, mapper, httpContextAccessor, configuration)
     {
         _configuration = configuration;
     }

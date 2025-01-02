@@ -7,6 +7,7 @@ using DOCA.API.Payload.Request.Blog;
 using DOCA.API.Payload.Response.Animal;
 using DOCA.API.Payload.Response.Blog;
 using DOCA.API.Payload.Response.BlogCategory;
+using DOCA.API.Payload.Response.Cart;
 using DOCA.API.Services.Interface;
 using DOCA.API.Utils;
 using DOCA.Domain.Filter;
@@ -14,15 +15,18 @@ using DOCA.Domain.Models;
 using DOCA.Domain.Paginate;
 using DOCA.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace DOCA.API.Services.Implement;
 
 public class BlogService : BaseService<BlogService>, IBlogService
 {
     private IConfiguration _configuration;
-    public BlogService(IUnitOfWork<DOCADbContext> unitOfWork, ILogger<BlogService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor, IConfiguration configuration) : base(unitOfWork, logger, mapper, httpContextAccessor)
+    // private readonly IRedisService _redisService;
+    public BlogService(IUnitOfWork<DOCADbContext> unitOfWork, ILogger<BlogService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor, IConfiguration configuration, IRedisService redisService) : base(unitOfWork, logger, mapper, httpContextAccessor,configuration)
     {
         _configuration = configuration;
+        // _redisService = redisService;
     }
 
     public async Task<IPaginate<GetBlogDetailResponse>> GetAllBlogPagingAsync(int page, int size, BlogFilter? filter, string? sortBy, bool isAsc)
@@ -144,45 +148,36 @@ public class BlogService : BaseService<BlogService>, IBlogService
                 bool isSuccess = await _unitOfWork.CommitAsync() > 0;
                 transactionScope.Complete();
                 GetBlogResponse response = null;
-                if (isSuccess)
-                {
-                    response = _mapper.Map<GetBlogResponse>(blog);
-                    // var cartKeys = await _redisService.GetListAsync("AllCartKeys");
-                    // if (cartKeys.Any())
-                    // {
-                    //     foreach (var cartKey in cartKeys)
-                    //     {
-                    //         var cartJson = await _redisService.GetStringAsync(cartKey);
-                    //         var cart = JsonConvert.DeserializeObject<List<CartModelResponse>>(cartJson);
-                    //         foreach (var cartItem in cart)
-                    //         {
-                    //             if (cartItem.ProductId == product.Id)
-                    //             {
-                    //                 
-                    //                 if (cartItem.Quantity > product.Quantity || product.IsHidden)
-                    //                 {
-                    //                     cart.Remove(cartItem);
-                    //                     break;
-                    //                 }
-                    //                 cartItem.Name = product.Name;
-                    //                 cartItem.Description = product.Description;
-                    //                 cartItem.Price = product.Price;
-                    //                 cartItem.MainImage = product.ProductImages?.Where(pi => pi.IsMain == true).FirstOrDefault()?.ImageUrl;
-                    //                 cartItem.ProductQuantity = product.Quantity;
-                    //             }
-                    //         }
-                    //         if (!cart.Any())
-                    //         {
-                    //             await _redisService.RemoveKeyAsync(cartKey);
-                    //             await _redisService.RemoveFromListAsync("AllCartKeys", cartKey);
-                    //         }
-                    //         else
-                    //         {
-                    //             await _redisService.SetStringAsync(cartKey, JsonConvert.SerializeObject(cart));
-                    //         }
-                    //     }
-                    // }
-                }
+                // if (isSuccess)
+                // {
+                //     response = _mapper.Map<GetBlogResponse>(blog);
+                //     var cartKeys = await _redisService.GetListAsync("AllCartKeys");
+                //     if (cartKeys.Any())
+                //     {
+                //         foreach (var cartKey in cartKeys)
+                //         {
+                //             var cartJson = await _redisService.GetStringAsync(cartKey);
+                //             var cart = JsonConvert.DeserializeObject<List<CartModelResponse>>(cartJson);
+                //             foreach (var cartItem in cart)
+                //             {
+                //                 if (cartItem.BlogId == blog.Id)
+                //                 {
+                //                     cartItem.BlogName = blog.Name;
+                //                     cartItem.BlogDescription = blog.Description;
+                //                 }
+                //             }
+                //             if (!cart.Any())
+                //             {
+                //                 await _redisService.RemoveKeyAsync(cartKey);
+                //                 await _redisService.RemoveFromListAsync("AllCartKeys", cartKey);
+                //             }
+                //             else
+                //             {
+                //                 await _redisService.SetStringAsync(cartKey, JsonConvert.SerializeObject(cart));
+                //             }
+                //         }
+                //     }
+                // }
                 return response;
             }
             catch (Exception e)
