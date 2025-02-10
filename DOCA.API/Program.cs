@@ -7,11 +7,11 @@ using FluentValidation.AspNetCore;
 var logger = NLog.LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"))
     .GetCurrentClassLogger();
 
-// try
-// {
+try
+{
     var builder = WebApplication.CreateBuilder(args);
 
-
+    
     builder.Services.AddCors(options =>
     {
         options.AddPolicy(CorConstant.PolicyName,
@@ -56,12 +56,12 @@ var logger = NLog.LogManager.LoadConfiguration(string.Concat(Directory.GetCurren
 
     logger.Info("Starting application...");
     app.Run();
-// }
-// catch (Exception e)
-// {
-//     logger.Error("Stop program because of error: " + e.Message);
-// }
-// finally
-// {
-//     NLog.LogManager.Shutdown();
-// }
+}
+catch (Exception e)
+{
+    logger.Error("Stop program because of error: " + e.Message);
+}
+finally
+{
+    NLog.LogManager.Shutdown();
+}
