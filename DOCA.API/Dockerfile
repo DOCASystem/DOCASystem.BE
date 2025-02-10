@@ -1,22 +1,25 @@
-# Sử dụng hình ảnh .NET SDK để build ứng dụng
+# Sử dụng .NET SDK để build ứng dụng
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 
-# Sao chép file dự án và khôi phục các gói NuGet
-COPY *.csproj ./
+# Sao chép file .csproj đúng thư mục
+COPY DOCA.API/*.csproj ./DOCA.API/
+WORKDIR /app/DOCA.API
+
+# Khôi phục dependencies
 RUN dotnet restore
 
-# Sao chép toàn bộ source code vào container và tiến hành build
+# Quay lại thư mục gốc và sao chép toàn bộ source code
+WORKDIR /app
 COPY . ./
+
+# Build ứng dụng
 RUN dotnet publish -c Release -o /out
 
-# Sử dụng hình ảnh .NET Runtime để chạy ứng dụng
+# Sử dụng .NET Runtime để chạy ứng dụng
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
-
-# Sao chép từ bước build sang container runtime
 COPY --from=build /out ./
 
-# Cấu hình cổng và lệnh chạy ứng dụng
-EXPOSE 80
-ENTRYPOINT ["dotnet", "YourProjectName.dll"]
+EXPOSE 7273
+ENTRYPOINT ["dotnet", "DOCA.API.dll"]
