@@ -13,6 +13,12 @@ public class MessageConstant
         public const string UpdateFail = "Update không thành công";
         public const string RoleNotFound = "Role không tồn tại";
         public const string MemberAddressNotFound = "Địa chỉ thành viên không tồn tại";
+        public const string PhoneNumberNotFound = "Số điện thoại không tồn tại";
+        public const string StaffIdNotNull = "Id staff không được để trống";
+        public const string StaffNotFound = "Staff không tồn tại";
+        public const string ForgetPasswordFail = "Quên mật khẩu không thành công";
+        public const string UpdateStaffFail = "Cập nhật staff không thành công";
+        public const string CreateStaffFail = "Tạo staff không thành công";
     }
 
     

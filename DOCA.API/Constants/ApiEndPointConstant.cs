@@ -17,6 +17,12 @@ public class ApiEndPointConstant
         public const string ForgetPassword = ApiEndpoint + "/forget-password";
     }
     
+    public class Staff
+    {
+        public const string StaffEndpoint = ApiEndpoint + "/staffs";
+        public const string StaffById = StaffEndpoint + "/{id}";
+    }
+    
     public class Member
     {
         public const string MemberEndpoint = ApiEndpoint + "/members";

@@ -34,21 +34,21 @@ public class PaymentController : BaseController<PaymentController>
         _logger.LogInformation("Check out successful");
         return CreatedAtAction(nameof(CheckOut), result);
     }
-    // [HttpPatch(ApiEndPointConstant.Payment.PaymentEndPoint)]
-    // [ProducesResponseType(typeof(PaymentWithOrderResponse), statusCode: StatusCodes.Status200OK)]
-    // [ProducesResponseType(typeof(string), statusCode: StatusCodes.Status500InternalServerError)]
-    // [CustomAuthorize(RoleEnum.Manager, RoleEnum.Staff, RoleEnum.Member)]
-    // public async Task<IActionResult> UpdatePaymentStatus([FromBody] UpdatePaymentOrderStatusRequest request)
-    // {
-    //     var response = await _paymentService.HandlePayment(request);
-    //     if (response == null)
-    //     {
-    //         _logger.LogError($"Update payment status failed with {request.OrderCode}");
-    //         return Problem($"{MessageConstant.Payment.UpdateStatusPaymentAndOrderFail}: {request.OrderCode}");
-    //     }
-    //     _logger.LogInformation($"Update payment status successful with {request.OrderCode}");
-    //     await _cartService.ClearCartAsync();
-    //     _logger.LogInformation($"Clear cart after order successful");
-    //     return Ok(response);
-    // }
+    [HttpPatch(ApiEndPointConstant.Payment.PaymentEndPoint)]
+    [ProducesResponseType(typeof(PaymentWithOrderResponse), statusCode: StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), statusCode: StatusCodes.Status500InternalServerError)]
+    [CustomAuthorize(RoleEnum.Manager, RoleEnum.Staff, RoleEnum.Member)]
+    public async Task<IActionResult> UpdatePaymentStatus([FromBody] UpdatePaymentOrderStatusRequest request)
+    {
+        var response = await _paymentService.HandlePayment(request);
+        if (response == null)
+        {
+            _logger.LogError($"Update payment status failed with {request.OrderCode}");
+            return Problem($"{MessageConstant.Payment.UpdateStatusPaymentAndOrderFail}: {request.OrderCode}");
+        }
+        _logger.LogInformation($"Update payment status successful with {request.OrderCode}");
+        await _cartService.ClearCartAsync();
+        _logger.LogInformation($"Clear cart after order successful");
+        return Ok(response);
+    }
 }
