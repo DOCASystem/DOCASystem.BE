@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using DOCA.API.Enums;
 
 
 namespace DOCA.Domain.Models;
@@ -16,5 +17,5 @@ public class User
     [MaxLength(250)]
     public string FullName { get; set; }
     [MaxLength(250)]
-    public string Role { get; set; }
+    public RoleEnum Role { get; set; }
 }

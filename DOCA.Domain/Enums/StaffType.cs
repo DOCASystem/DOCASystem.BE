@@ -1,6 +1,7 @@
 namespace DOCA.API.Enums;
 
-public class StaffType
+public enum StaffType
 {
-    
+    Technical = 0,
+    BillOfLading = 1
 }

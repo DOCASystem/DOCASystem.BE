@@ -8,6 +8,8 @@ public class Order
 {
     [Key]
     public Guid Id { get; set; }
+    
+    [Column(TypeName = "decimal(18, 4)")] // Định nghĩa kiểu dữ liệu SQL Server
     public decimal Total { get; set; }
     public OrderStatus  Status { get; set; }
     public string Code { get; set; }

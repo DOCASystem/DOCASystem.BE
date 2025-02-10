@@ -19,14 +19,14 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 			_dbSet = context.Set<T>();
 		}
 
-		public void Dispose()
+		public override void Dispose()
 		{
 			_dbContext?.Dispose();
 		}
 
 		#region Gett Async
 
-		public virtual async Task<T> SingleOrDefaultAsync(Expression<Func<T, bool>> predicate = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
+		public override async Task<T> SingleOrDefaultAsync(Expression<Func<T, bool>> predicate = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
 		{
 			IQueryable<T> query = _dbSet;
 			if (include != null) query = include(query);
@@ -38,7 +38,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 			return await query.AsNoTracking().FirstOrDefaultAsync();
 		}
 
-		public virtual async Task<TResult> SingleOrDefaultAsync<TResult>(Expression<Func<T, TResult>> selector, Expression<Func<T, bool>> predicate = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
+		public override async Task<TResult> SingleOrDefaultAsync<TResult>(Expression<Func<T, TResult>> selector, Expression<Func<T, bool>> predicate = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
 			Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
 		{
 			IQueryable<T> query = _dbSet;
@@ -51,7 +51,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 			return await query.AsNoTracking().Select(selector).FirstOrDefaultAsync();
 		}
 
-		public virtual async Task<ICollection<T>> GetListAsync(Expression<Func<T, bool>> predicate = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
+		public override async Task<ICollection<T>> GetListAsync(Expression<Func<T, bool>> predicate = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
 		{
 			IQueryable<T> query = _dbSet;
 
@@ -64,7 +64,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 			return await query.AsNoTracking().ToListAsync();
 		}
 
-		public virtual async Task<ICollection<TResult>> GetListAsync<TResult>(Expression<Func<T, TResult>> selector, Expression<Func<T, bool>> predicate = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
+		public override async Task<ICollection<TResult>> GetListAsync<TResult>(Expression<Func<T, TResult>> selector, Expression<Func<T, bool>> predicate = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null)
 		{
 			IQueryable<T> query = _dbSet;
 
@@ -77,7 +77,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 			return await query.Select(selector).ToListAsync();
 		}
 
-		public async Task<IPaginate<TResult>> GetPagingListAsync<TResult>(Expression<Func<T, TResult>> selector, IFilter<T> filter, Expression<Func<T, bool>> predicate = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
+		public override async Task<IPaginate<TResult>> GetPagingListAsync<TResult>(Expression<Func<T, TResult>> selector, IFilter<T> filter, Expression<Func<T, bool>> predicate = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
 			Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null, int page = 1, int size = 10, string sortBy = null, bool isAsc = true)
 		{
 			IQueryable<T> query = _dbSet;
@@ -124,13 +124,13 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 
 		#region Insert
 
-		public async Task InsertAsync(T entity)
+		public override async Task InsertAsync(T entity)
 		{
 			if (entity == null) return;
 			await _dbSet.AddAsync(entity);
 		}
 
-		public async Task InsertRangeAsync(IEnumerable<T> entities)
+		public override async Task InsertRangeAsync(IEnumerable<T> entities)
 		{
 			await _dbSet.AddRangeAsync(entities);
 		}
@@ -138,22 +138,22 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 		#endregion
 
 		#region Update
-		public void UpdateAsync(T entity)
+		public override void UpdateAsync(T entity)
 		{
 			_dbSet.Update(entity);
 		}
 
-		public void UpdateRange(IEnumerable<T> entities)
+		public override void UpdateRange(IEnumerable<T> entities)
 		{
 			_dbSet.UpdateRange(entities);
 		}
 
-		public void DeleteAsync(T entity)
+		public override void DeleteAsync(T entity)
 		{
 			_dbSet.Remove(entity);
 		}
 
-		public void DeleteRangeAsync(IEnumerable<T> entities)
+		public override void DeleteRangeAsync(IEnumerable<T> entities)
 		{
 			_dbSet.RemoveRange(entities);
 		}

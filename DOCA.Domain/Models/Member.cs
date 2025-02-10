@@ -21,4 +21,5 @@ public class Member
     public string? CommuneCode { get; set; }
     [MaxLength(500)]
     public string? Address { get; set; }
+    public virtual ICollection<Order>? Orders { get; set; }
 }
