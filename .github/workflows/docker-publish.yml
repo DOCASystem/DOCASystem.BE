@@ -34,7 +34,7 @@ jobs:
 
       - name: 🐳 Build Docker Image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/doca-be:latest -f DOCA.API/Dockerfile .
+          docker build -t magicflexing/doca-be:latest -f DOCA.API/Dockerfile .
 
       - name: 🐳 Push Docker Image
         run: |
