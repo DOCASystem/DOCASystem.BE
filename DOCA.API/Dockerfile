@@ -14,5 +14,5 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 COPY --from=build /out ./
 
-EXPOSE 7273
+EXPOSE 5257
 ENTRYPOINT ["dotnet", "DOCA.API.dll"]
