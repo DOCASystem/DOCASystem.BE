@@ -16,3 +16,5 @@ COPY --from=build /out ./
 
 EXPOSE 8080
 ENTRYPOINT ["dotnet", "DOCA.API.dll"]
+
+

@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  redis:
+    build:
+      context: ./redis  # Thư mục chứa Dockerfile của Redis
+      dockerfile: Dockerfile
+    container_name: redis-container
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server /usr/local/etc/redis/redis.conf
+
+  api:
+    image: magicflexing/doca-be:latest  # Dùng image đã build trên Docker Hub
+    container_name: dotnet-api
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+    environment:
+      - REDIS_CONNECTION_STRING=redis:6379  # Kết nối Redis trong container
+
+volumes:
+  redis_data:
