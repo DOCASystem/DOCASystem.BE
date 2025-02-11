@@ -14,6 +14,6 @@ public class SignUpRequest
     public string PhoneNumber { get; set; }
     [Required]
     public string FullName { get; set; }
-    // [Required]
-    // public string Otp { get; set; }
+    [Required]
+    public string Otp { get; set; }
 }

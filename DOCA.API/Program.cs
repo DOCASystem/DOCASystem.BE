@@ -23,7 +23,7 @@ try
         hostOptions.BackgroundServiceExceptionBehavior = BackgroundServiceExceptionBehavior.Ignore;
     });
     builder.Services.AddDatabase();
-    builder.Services.AddRedis();
+    builder.Services.AddRedis(builder.Configuration);
     builder.Services.AddUnitOfWork();
     builder.Services.AddServices(builder.Configuration);
     builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

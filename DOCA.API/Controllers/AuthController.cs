@@ -51,7 +51,7 @@ public class AuthController : BaseController<AuthController>
     [HttpPost(ApiEndPointConstant.Auth.SendOtp)]
     [ProducesResponseType(typeof(string), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> SendOtp([FromBody] GenerateOtpRequest request)
+    public async Task<IActionResult> SendOtp([FromBody] GenerateEmailOtpRequest request)
     {
         var result = await _userService.GenerateOtpAsync(request);
         if (result == null)

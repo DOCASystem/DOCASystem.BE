@@ -33,7 +33,7 @@ public class UserService : BaseService<UserService>, IUserService
     public UserService(IUnitOfWork<DOCADbContext> unitOfWork, ILogger<UserService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor, IConfiguration configuration, IRedisService redisService) : base(unitOfWork, logger, mapper, httpContextAccessor, configuration)
     {
         _configuration = configuration;
-        _redisService = _redisService;
+        _redisService = redisService;
     }
 
     public async Task<LoginResponse> LoginAsync(LoginRequest request)
@@ -209,30 +209,75 @@ public class UserService : BaseService<UserService>, IUserService
         return response;
     }
 
-    public async Task<string> GenerateOtpAsync(GenerateOtpRequest request)
+
+    // public async Task<string> GenerateOtpAsync(GenerateOtpRequest request)
+    // {
+    //     // var redis = ConnectionMultiplexer.Connect(_configuration.GetConnectionString("Redis"));
+    //     // var db = redis.GetDatabase();
+    //     var key = request.PhoneNumber;
+    //     
+    //     var existingOtp = await _redisService.GetStringAsync(key);
+    //     if (!string.IsNullOrEmpty(existingOtp)) throw new BadHttpRequestException(MessageConstant.Sms.OtpAlreadySent);
+    //     
+    //     if(request.PhoneNumber == null) throw new BadHttpRequestException(MessageConstant.User.PhoneNumberNotFound);
+    //     var phoneNumberArray = new string[] { request.PhoneNumber };
+    //     var otp = OtpUtil.GenerateOtp();
+    //     var content = "Mã OTP của bạn là: " + otp;
+    //     var response = SmsUtil.sendSMS(phoneNumberArray, content, _configuration);
+    //     _logger.LogInformation(response);
+    //     var smsResponse = JsonSerializer.Deserialize<SmsModel.SmsResponse>(response);
+    //     if (smsResponse.status != "success" && smsResponse.code != "00")
+    //     {
+    //         throw new BadHttpRequestException(MessageConstant.Sms.SendSmsFailed);
+    //     }
+    //     
+    //     await _redisService.SetStringAsync(key, otp, TimeSpan.FromMinutes(2));
+    //     return request.PhoneNumber;
+    // }
+    
+    
+    public async Task<string> GenerateOtpAsync(GenerateEmailOtpRequest request)
     {
-        // var redis = ConnectionMultiplexer.Connect(_configuration.GetConnectionString("Redis"));
-        // var db = redis.GetDatabase();
-        var key = request.PhoneNumber;
-        
+        if (request == null || string.IsNullOrEmpty(request.Email))
+            throw new BadHttpRequestException("Email không được để trống.");
+
+        if (_redisService == null)
+            throw new InvalidOperationException("Redis service chưa được khởi tạo.");
+
+        var key = request.Email; // Dùng email làm key
+
         var existingOtp = await _redisService.GetStringAsync(key);
-        if (!string.IsNullOrEmpty(existingOtp)) throw new BadHttpRequestException(MessageConstant.Sms.OtpAlreadySent);
-        
-        if(request.PhoneNumber == null) throw new BadHttpRequestException(MessageConstant.User.PhoneNumberNotFound);
-        var phoneNumberArray = new string[] { request.PhoneNumber };
+        if (!string.IsNullOrEmpty(existingOtp))
+            throw new BadHttpRequestException("OTP đã được gửi trước đó, vui lòng kiểm tra email.");
+
         var otp = OtpUtil.GenerateOtp();
-        var content = "Mã OTP của bạn là: " + otp;
-        var response = SmsUtil.sendSMS(phoneNumberArray, content, _configuration);
-        _logger.LogInformation(response);
-        var smsResponse = JsonSerializer.Deserialize<SmsModel.SmsResponse>(response);
-        if (smsResponse.status != "success" && smsResponse.code != "00")
+        var subject = "Mã OTP của bạn";
+        var body = $"Mã OTP của bạn là: <b>{otp}</b>. Mã này có hiệu lực trong 2 phút.";
+
+        var response = SmsUtil.SendEmail(request.Email, subject, body, _configuration);
+        _logger.LogInformation($"📧 Đã gửi email OTP: {response}");
+
+        if (!response)
         {
-            throw new BadHttpRequestException(MessageConstant.Sms.SendSmsFailed);
+            _logger.LogError("❌ Gửi email OTP thất bại.");
+            throw new BadHttpRequestException("Không thể gửi OTP vào lúc này. Vui lòng thử lại sau.");
         }
-        
-        await _redisService.SetStringAsync(key, otp, TimeSpan.FromMinutes(2));
-        return request.PhoneNumber;
+
+        try
+        {
+            await _redisService.SetStringAsync(key, otp, TimeSpan.FromMinutes(2));
+            _logger.LogInformation($"✅ OTP [{otp}] đã được lưu vào Redis cho email {request.Email}");
+            return otp;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"❌ Lỗi khi lưu OTP vào Redis: {ex.Message}");
+            throw new BadHttpRequestException("Không thể gửi OTP vào lúc này. Vui lòng thử lại sau.");
+        }
     }
+
+
+
 
     public async Task<UserResponse> ForgetPassword(ForgetPasswordRequest request)
     {

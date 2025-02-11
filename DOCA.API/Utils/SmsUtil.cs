@@ -1,35 +1,44 @@
 using System.Net;
+using System.Net.Mail;
 
 namespace DOCA.API.Utils;
 
 public class SmsUtil
 {
-    public static String sendSMS(String[] phones, String content, IConfiguration configuration)
+    public static bool SendEmail(string toEmail, string subject, string body, IConfiguration configuration)
     {
-        String url = configuration["SMS:base_url"] + "/sms/send";
-        if (phones.Length <= 0)
-            return "";
-        
-        int type = 5;
-        String sender = configuration["SMS:device_id"];
-        NetworkCredential myCreds = new NetworkCredential(configuration["SMS:access_token"], configuration["SMS:password"]);
-        WebClient client = new WebClient();
-        client.Credentials = myCreds;
-        client.Headers[HttpRequestHeader.ContentType] = "application/json";
-
-        string builder = "{\"to\":[";
-
-        for (int i = 0; i < phones.Length; i++)
+        try
         {
-            builder += "\"" + phones[i] + "\"";
-            if (i < phones.Length - 1)
-            {
-                builder += ",";
-            }
-        }
-        builder += "], \"content\": \"" + Uri.EscapeDataString(content) + "\", \"type\":" + type + ", \"sender\": \"" + sender + "\"}";
+            var smtpServer = configuration["Email:SmtpServer"];
+            var smtpPort = int.Parse(configuration["Email:Port"]);
+            var smtpUser = configuration["Email:Username"];
+            var smtpPass = configuration["Email:Password"];
+            var fromEmail = configuration["Email:From"];
 
-        String json = builder.ToString();
-        return client.UploadString(url, json);
+            var smtpClient = new SmtpClient(smtpServer)
+            {
+                Port = smtpPort,
+                Credentials = new NetworkCredential(smtpUser, smtpPass),
+                EnableSsl = true
+            };
+
+            var mailMessage = new MailMessage
+            {
+                From = new MailAddress(fromEmail),
+                Subject = subject,
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            mailMessage.To.Add(toEmail);
+            smtpClient.Send(mailMessage);
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ Lỗi gửi email: {ex.Message}");
+            return false;
+        }
     }
 }

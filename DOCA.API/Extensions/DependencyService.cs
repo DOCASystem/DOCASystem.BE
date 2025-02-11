@@ -33,14 +33,21 @@ public static class DependencyService
         
         return service;
     }
-    public static IServiceCollection AddRedis(this IServiceCollection service)
+    public static IServiceCollection AddRedis(this IServiceCollection services, IConfiguration configuration)
     {
-        IConfiguration configuration = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true).Build();
-        service.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(configuration.GetConnectionString("Redis")));
-        service.AddScoped<IRedisService, RedisService>();
-        return service;
+        var redisConnectionString = configuration.GetConnectionString("Redis");
+
+        if (string.IsNullOrEmpty(redisConnectionString))
+        {
+            throw new InvalidOperationException("❌ Connection string cho Redis không được cấu hình.");
+        }
+
+        services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConnectionString));
+        services.AddScoped<IRedisService, RedisService>();
+
+        return services;
     }
+
     private static string CreateConnectionString(IConfiguration configuration)
     {
         var connectionString = configuration.GetValue<string>("ConnectionStrings:MyConnectionString");

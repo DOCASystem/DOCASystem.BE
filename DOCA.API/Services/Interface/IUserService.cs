@@ -18,7 +18,7 @@ public interface IUserService
     Task<LoginResponse> RegisterAsync(SignUpRequest request);
    Task<MemberResponse> GetMemberInformationAsync();
    Task<UserResponse> UpdateMemberAsync(UpdateMemberRequest request);
-   Task<string> GenerateOtpAsync(GenerateOtpRequest request);
+   Task<string> GenerateOtpAsync(GenerateEmailOtpRequest request);
    Task<UserResponse> ForgetPassword(ForgetPasswordRequest request);
    Task<IPaginate<MemberResponse>> GetMembersAsync(int page, int size, MemberFilter? filter, string? sortBy, bool isAsc);
    Task<IPaginate<StaffResponse>> GetStaffsAsync(int page, int size, StaffFilter? filter, string? sortBy, bool isAsc);
