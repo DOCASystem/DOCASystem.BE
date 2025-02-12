@@ -1,12 +1,28 @@
+#FROM mcr.microsoft.com/dotnet/sdk:8.0 AS dev
+#WORKDIR /app
+#
+## Copy toàn bộ solution vào container
+#COPY . .
+#
+## Cài đặt dependency
+#RUN dotnet restore
+#
+## Mở cổng 8080
+#EXPOSE 8080
+#
+## Chạy ứng dụng với chế độ watch
+#CMD ["dotnet", "watch", "run", "--urls=http://0.0.0.0:8080"]
+
+
 # Sử dụng .NET SDK để build ứng dụng
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 
-# Sao chép toàn bộ dự án và khôi phục dependencies
-COPY . ./
+# Copy toàn bộ source code vào container
+COPY . .  
 RUN dotnet restore
 
-# Build ứng dụng
+# Build và publish ứng dụng
 RUN dotnet publish DOCA.API/DOCA.API.csproj -c Release -o /out
 
 # Sử dụng .NET Runtime để chạy ứng dụng
@@ -16,5 +32,3 @@ COPY --from=build /out ./
 
 EXPOSE 8080
 ENTRYPOINT ["dotnet", "DOCA.API.dll"]
-
-
