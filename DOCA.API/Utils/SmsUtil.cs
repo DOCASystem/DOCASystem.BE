@@ -13,18 +13,19 @@ public class SmsUtil
             var smtpPort = int.Parse(configuration["Email:Port"]);
             var smtpUser = configuration["Email:Username"];
             var smtpPass = configuration["Email:Password"];
-            var fromEmail = configuration["Email:From"];
+            var displayName = configuration["Email:DisplayName"];
 
-            var smtpClient = new SmtpClient(smtpServer)
+            using var smtpClient = new SmtpClient(smtpServer)
             {
                 Port = smtpPort,
                 Credentials = new NetworkCredential(smtpUser, smtpPass),
-                EnableSsl = true
+                EnableSsl = true,
+                UseDefaultCredentials = false
             };
-
-            var mailMessage = new MailMessage
+            
+            using var mailMessage = new MailMessage
             {
-                From = new MailAddress(fromEmail),
+                From = new MailAddress(smtpUser, displayName),
                 Subject = subject,
                 Body = body,
                 IsBodyHtml = true
@@ -33,11 +34,12 @@ public class SmsUtil
             mailMessage.To.Add(toEmail);
             smtpClient.Send(mailMessage);
 
+            Console.WriteLine($" Email đã được gửi thành công đến {toEmail}");
             return true;
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"❌ Lỗi gửi email: {ex.Message}");
+            Console.WriteLine($" Lỗi gửi email: {ex.Message}");
             return false;
         }
     }

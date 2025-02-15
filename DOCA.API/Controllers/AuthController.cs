@@ -58,7 +58,7 @@ public class AuthController : BaseController<AuthController>
         {
             return Problem(MessageConstant.Sms.SendSmsFailed);
         }
-
+    
         return CreatedAtAction(nameof(SendOtp), result);
     }
     [HttpPatch(ApiEndPointConstant.Auth.ForgetPassword)]
