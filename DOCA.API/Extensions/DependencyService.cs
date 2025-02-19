@@ -39,7 +39,7 @@ public static class DependencyService
 
         if (string.IsNullOrEmpty(redisConnectionString))
         {
-            throw new InvalidOperationException("❌ Connection string cho Redis không được cấu hình.");
+            throw new InvalidOperationException(" Connection string cho Redis không được cấu hình.");
         }
 
         services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConnectionString));

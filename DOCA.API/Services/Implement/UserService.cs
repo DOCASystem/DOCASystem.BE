@@ -10,7 +10,6 @@ using DOCA.API.Payload.Request.Staff;
 using DOCA.API.Payload.Request.User;
 using DOCA.API.Payload.Response.Account;
 using DOCA.API.Payload.Response.Member;
-using DOCA.API.Payload.Response.Sms;
 using DOCA.API.Payload.Response.Staff;
 using DOCA.API.Services.Interface;
 using DOCA.API.Utils;
@@ -112,14 +111,14 @@ public class UserService : BaseService<UserService>, IUserService
         var user = _mapper.Map<User>(request);
 
         // Kiểm tra OTP qua Redis Service
-        // var key = request.PhoneNumber;
-        // var existingOtp = await _redisService.GetStringAsync(key);
+        var key = request.PhoneNumber;
+        var existingOtp = await _redisService.GetStringAsync(key);
 
-        // if (string.IsNullOrEmpty(existingOtp))
-        //     throw new BadHttpRequestException(MessageConstant.Sms.OtpNotFound);
-        //
-        // if (existingOtp != request.Otp)
-        //     throw new BadHttpRequestException(MessageConstant.Sms.OtpIncorrect);
+        if (string.IsNullOrEmpty(existingOtp))
+            throw new BadHttpRequestException(MessageConstant.Otp.OtpNotFound);
+        
+        if (existingOtp != request.Otp)
+            throw new BadHttpRequestException(MessageConstant.Otp.OtpIncorrect);
 
         user.Password = PasswordUtil.HashPassword(request.Password);
         user.Role = RoleEnum.Member;
@@ -239,16 +238,16 @@ public class UserService : BaseService<UserService>, IUserService
     public async Task<string> GenerateOtpAsync(GenerateEmailOtpRequest request)
     {
         if (request == null || string.IsNullOrEmpty(request.Email))
-            throw new BadHttpRequestException("Email không được để trống.");
+            throw new BadHttpRequestException(MessageConstant.Otp.EmailRequired);
 
         if (_redisService == null)
-            throw new InvalidOperationException("Redis service chưa được khởi tạo.");
+            throw new InvalidOperationException(MessageConstant.Redis.RedisServiceNotInitialized);
 
-        var key = request.Email; // Dùng email làm key
+        var key = request.Email;
 
         var existingOtp = await _redisService.GetStringAsync(key);
         if (!string.IsNullOrEmpty(existingOtp))
-            throw new BadHttpRequestException("OTP đã được gửi trước đó, vui lòng kiểm tra email.");
+            throw new BadHttpRequestException(MessageConstant.Otp.OtpAlreadySent);
 
         var otp = OtpUtil.GenerateOtp();
         var subject = "Mã OTP của bạn";
@@ -259,22 +258,23 @@ public class UserService : BaseService<UserService>, IUserService
 
         if (!response)
         {
-            _logger.LogError("❌ Gửi email OTP thất bại.");
-            throw new BadHttpRequestException("Không thể gửi OTP vào lúc này. Vui lòng thử lại sau.");
+            _logger.LogError($" {MessageConstant.Email.SendEmailFailed}");
+            throw new BadHttpRequestException(MessageConstant.Otp.SendOtpFailed);
         }
 
         try
         {
             await _redisService.SetStringAsync(key, otp, TimeSpan.FromMinutes(2));
-            _logger.LogInformation($"✅ OTP [{otp}] đã được lưu vào Redis cho email {request.Email}");
+            _logger.LogInformation($" OTP [{otp}] đã được lưu vào Redis cho email {request.Email}");
             return otp;
         }
         catch (Exception ex)
         {
-            _logger.LogError($"❌ Lỗi khi lưu OTP vào Redis: {ex.Message}");
-            throw new BadHttpRequestException("Không thể gửi OTP vào lúc này. Vui lòng thử lại sau.");
+            _logger.LogError($" {MessageConstant.Otp.SaveOtpFailed}: {ex.Message}");
+            throw new BadHttpRequestException(MessageConstant.Otp.SendOtpFailed);
         }
     }
+
 
 
 
@@ -287,10 +287,10 @@ public class UserService : BaseService<UserService>, IUserService
         var redis = ConnectionMultiplexer.Connect(_configuration.GetConnectionString("Redis"));
         var db = redis.GetDatabase();
         var key = request.PhoneNumber;
-        // var existingOtp = await _redisService.GetStringAsync(key);
-        //
-        // if (string.IsNullOrEmpty(existingOtp)) throw new BadHttpRequestException(MessageConstant.Sms.OtpNotFound);
-        // if (existingOtp != request.Otp) throw new BadHttpRequestException(MessageConstant.Sms.OtpIncorrect);
+        var existingOtp = await _redisService.GetStringAsync(key);
+        
+        if (string.IsNullOrEmpty(existingOtp)) throw new BadHttpRequestException(MessageConstant.Otp.OtpNotFound);
+        if (existingOtp != request.Otp) throw new BadHttpRequestException(MessageConstant.Otp.OtpIncorrect);
         
         user.Password = PasswordUtil.HashPassword(request.Password);
         _unitOfWork.GetRepository<User>().UpdateAsync(user);

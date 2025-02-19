@@ -20,6 +20,25 @@ public class MessageConstant
         public const string UpdateStaffFail = "Cập nhật staff không thành công";
         public const string CreateStaffFail = "Tạo staff không thành công";
     }
+    public static class Otp
+    {
+        public const string EmailRequired = "Email không được để trống.";
+        public const string OtpAlreadySent = "OTP đã được gửi trước đó, vui lòng kiểm tra email.";
+        public const string SendOtpFailed = "Không thể gửi OTP vào lúc này. Vui lòng thử lại sau.";
+        public const string SaveOtpFailed = "Lỗi khi lưu OTP vào Redis.";
+        public const string OtpNotFound = "Mã OTP không tồn tại";
+        public const string OtpIncorrect = "Mã OTP không chính xác";
+    }
+
+    public static class Redis
+    {
+        public const string RedisServiceNotInitialized = "Redis service chưa được khởi tạo.";
+    }
+
+    public static class Email
+    {
+        public const string SendEmailFailed = "Gửi email OTP thất bại.";
+    }
 
     
     public static class Sms

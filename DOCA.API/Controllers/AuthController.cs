@@ -56,7 +56,7 @@ public class AuthController : BaseController<AuthController>
         var result = await _userService.GenerateOtpAsync(request);
         if (result == null)
         {
-            return Problem(MessageConstant.Sms.SendSmsFailed);
+            return Problem(MessageConstant.Otp.SendOtpFailed);
         }
     
         return CreatedAtAction(nameof(SendOtp), result);
