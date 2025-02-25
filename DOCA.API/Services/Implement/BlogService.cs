@@ -38,6 +38,7 @@ public class BlogService : BaseService<BlogService>, IBlogService
                     Id = a.Id,
                     Name = a.Name,
                     Description = a.Description,
+                    Status = a.Status,
                     CreatedAt = a.CreatedAt,
                     ModifiedAt = a.ModifiedAt,
                     IsHindden = a.IsHindden,
@@ -63,6 +64,7 @@ public class BlogService : BaseService<BlogService>, IBlogService
             Id = b.Id,
             Name = b.Name,
             Description = b.Description,
+            Status = b.Status,
             CreatedAt = b.CreatedAt,
             ModifiedAt = b.ModifiedAt,
             IsHidden = b.IsHindden,
@@ -139,6 +141,7 @@ public class BlogService : BaseService<BlogService>, IBlogService
         blog.Name = string.IsNullOrEmpty(request.Name) ? blog.Name : request.Name;
         blog.Description = string.IsNullOrEmpty(request.Description) ? blog.Description : request.Description;
         blog.IsHindden = (bool) (request.IsHidden == null ? blog.IsHindden : request.IsHidden);
+        blog.Status = request.Status == null ? blog.Status : request.Status;
         blog.ModifiedAt = TimeUtil.GetCurrentSEATime();
         using (var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
         {
@@ -198,6 +201,7 @@ public class BlogService : BaseService<BlogService>, IBlogService
                 Id = a.Id,
                 Description = a.Description,
                 Name = a.Name,
+                Status = a.Status,
                 CreatedAt = a.CreatedAt,
                 ModifiedAt = a.ModifiedAt,
                 IsHindden = a.IsHindden,

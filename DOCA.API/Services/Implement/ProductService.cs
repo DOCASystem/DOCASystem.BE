@@ -41,6 +41,7 @@ public class ProductService : BaseService<ProductService>, IProductService
                     Id = p.Id,
                     Description = p.Description,
                     Quantity = p.Quantity,
+                    Volume = p.Volume,
                     Name = p.Name,
                     Price = p.Price,
                     IsHidden = p.IsHidden,
@@ -70,6 +71,7 @@ public class ProductService : BaseService<ProductService>, IProductService
             Description = p.Description,
             Price = p.Price,
             Quantity = p.Quantity,
+            Volume = p.Volume,
             CreatedAt = p.CreatedAt,
             ModifiedAt = p.ModifiedAt,
             IsHidden = p.IsHidden,
@@ -180,6 +182,7 @@ public class ProductService : BaseService<ProductService>, IProductService
         product.Description = string.IsNullOrEmpty(request.Description) ? product.Description : request.Description;
         // product.Price = (int) (request.Price == null ? product.Price : request.Price);
         product.Quantity = (int)(request.Quantity == null ? product.Quantity : request.Quantity);
+        product.Volume = (decimal)(request.Volume == null ? product.Volume : request.Volume);
         product.IsHidden = (bool) (request.IsHidden == null ? product.IsHidden : request.IsHidden);
         product.ModifiedAt = TimeUtil.GetCurrentSEATime();
         using (var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
@@ -216,6 +219,7 @@ public class ProductService : BaseService<ProductService>, IProductService
                                     cartItem.Price = product.Price;
                                     cartItem.MainImage = product.ProductImages?.Where(pi => pi.IsMain == true).FirstOrDefault()?.ImageUrl;
                                     cartItem.ProductQuantity = product.Quantity;
+                                    cartItem.Volume = product.Volume;
                                 }
                             }
                             if (!cart.Any())
@@ -249,6 +253,7 @@ public class ProductService : BaseService<ProductService>, IProductService
                 Id = p.Id,
                 Description = p.Description,
                 Quantity = p.Quantity,
+                Volume = p.Volume,
                 Name = p.Name,
                 Price = p.Price,
                 IsHidden = p.IsHidden,

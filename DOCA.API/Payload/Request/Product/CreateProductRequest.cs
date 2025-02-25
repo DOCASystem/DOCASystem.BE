@@ -13,6 +13,8 @@ public class CreateProductRequest
     [Required]
     public int Quantity { get; set; }
     [Required]
+    public decimal Volume { get; set; }
+    [Required]
     public bool IsHidden { get; set; }
     
     public List<Guid>? CategoryIds { get; set; }
