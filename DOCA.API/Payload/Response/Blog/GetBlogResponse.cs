@@ -1,3 +1,5 @@
+using DOCA.API.Enums;
+
 namespace DOCA.API.Payload.Response.Blog;
 
 public class GetBlogResponse
@@ -6,6 +8,7 @@ public class GetBlogResponse
     public string Name { get; set; }
     public string Description { get; set; }
     public DateTime CreatedAt { get; set; }
+    public BlogEnum Status { get; set; }
     public DateTime ModifiedAt { get; set; }
     public bool IsHidden { get; set; }
 }

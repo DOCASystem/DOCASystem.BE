@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using DOCA.API.Enums;
 
 namespace DOCA.API.Payload.Request.Blog;
 
@@ -10,7 +11,7 @@ public class CreateBlogRequest
     public string Description { get; set; }
     [Required]
     public bool IsHidden { get; set; }
-    
+    public BlogEnum Status { get; set; }
     public List<Guid>? BlogCategoryIds { get; set; }
     [Required]
     public string MainImage { get; set; }
