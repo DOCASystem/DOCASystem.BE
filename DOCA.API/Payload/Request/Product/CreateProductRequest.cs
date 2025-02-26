@@ -19,6 +19,6 @@ public class CreateProductRequest
     
     public List<Guid>? CategoryIds { get; set; }
     [Required]
-    public string MainImage { get; set; }
-    public List<string>? SecondaryImages { get; set; }
+    public IFormFile MainImage { get; set; }
+    public List<IFormFile>? SecondaryImages { get; set; }
 }

@@ -19,15 +19,15 @@ namespace DOCA.API.Services.Implement;
 public class ProductService : BaseService<ProductService>, IProductService
 {
     private IConfiguration _configuration;
-    // private readonly IFirebaseService _firebaseService;
+    private IUploadService _uploadService;
     private readonly IRedisService _redisService;
 
     public ProductService(IUnitOfWork<DOCADbContext> unitOfWork, ILogger<ProductService> logger, IMapper mapper,
-        IHttpContextAccessor httpContextAccessor, IConfiguration configuration, IRedisService redisService) : base(unitOfWork, logger, mapper,
+        IHttpContextAccessor httpContextAccessor, IConfiguration configuration, IRedisService redisService, IUploadService uploadService) : base(unitOfWork, logger, mapper,
         httpContextAccessor, configuration)
     {
+        _uploadService = uploadService;
         _configuration = configuration;
-        // _firebaseService = firebaseService;
         _redisService = redisService;
     }
 
@@ -123,35 +123,35 @@ public class ProductService : BaseService<ProductService>, IProductService
                     }
                 }
 
-                // var mainImageUrl = await _firebaseService.UploadFileToFirebaseAsync(request.MainImage);
-                // if (!string.IsNullOrEmpty(mainImageUrl))
-                // {
-                //     await _unitOfWork.GetRepository<ProductImage>().InsertAsync(new ProductImage()
-                //     {
-                //         Id = Guid.NewGuid(),
-                //         ProductId = product.Id,
-                //         ImageUrl = mainImageUrl,
-                //         IsMain = true
-                //     });
-                // }
+                var mainImageUrl = await _uploadService.UploadImageAsync(request.MainImage);
+                if (!string.IsNullOrEmpty(mainImageUrl))
+                {
+                    await _unitOfWork.GetRepository<ProductImage>().InsertAsync(new ProductImage()
+                    {
+                        Id = Guid.NewGuid(),
+                        ProductId = product.Id,
+                        ImageUrl = mainImageUrl,
+                        IsMain = true
+                    });
+                }
 
-                // if (request.SecondaryImages != null)
-                // {
-                //     var imageUrls = await _firebaseService.UploadFilesToFirebaseAsync(request.SecondaryImages);
-                //     if (imageUrls.Any())
-                //     {
-                //         foreach (var imageUrl in imageUrls)
-                //         {
-                //             await _unitOfWork.GetRepository<ProductImage>().InsertAsync(new ProductImage()
-                //             {
-                //                 Id = Guid.NewGuid(),
-                //                 ProductId = product.Id,
-                //                 ImageUrl = imageUrl,
-                //                 IsMain = false
-                //             });
-                //         }
-                //     }
-                // }
+                if (request.SecondaryImages != null)
+                {
+                    var imageUrls = await _uploadService.UploadImageAsync(request.SecondaryImages);
+                    if (imageUrls.Any())
+                    {
+                        foreach (var imageUrl in imageUrls)
+                        {
+                            await _unitOfWork.GetRepository<ProductImage>().InsertAsync(new ProductImage()
+                            {
+                                Id = Guid.NewGuid(),
+                                ProductId = product.Id,
+                                ImageUrl = imageUrl,
+                                IsMain = false
+                            });
+                        }
+                    }
+                }
                 await _unitOfWork.GetRepository<Product>().InsertAsync(product);
                 bool isSuccess = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccess) return null;
@@ -322,30 +322,30 @@ public class ProductService : BaseService<ProductService>, IProductService
                     );
                     _unitOfWork.GetRepository<ProductImage>().DeleteAsync(productImage);
                 }
-                // foreach (var imageProduct in request)
-                // {
-                //     if (imageProduct.Id == null)
-                //     {
-                //         var imageUrl = await _firebaseService.UploadFileToFirebaseAsync(imageProduct.ImageUrl);
-                //         if (string.IsNullOrEmpty(imageUrl))
-                //             throw new BadHttpRequestException(MessageConstant.ProductImage.UploadImageFail);
-                //         var newProductImage = new ProductImage()
-                //         {
-                //             Id = Guid.NewGuid(),
-                //             IsMain = imageProduct.IsMain,
-                //             ImageUrl = imageUrl,
-                //             ProductId = product.Id
-                //         };
-                //         await _productImageRepository.InsertAsync(newProductImage);
-                //     }
-                //     else
-                //     {
-                //         var productImage = _mapper.Map<ProductImage>(imageProduct);
-                //         productImage.Id = imageProduct.Id!.Value;
-                //         productImage.ProductId = product.Id;
-                //         _productImageRepository.UpdateAsync(productImage);
-                //     }
-                // }
+                foreach (var imageProduct in request)
+                {
+                    if (imageProduct.Id == null)
+                    {
+                        var imageUrl = await _uploadService.UploadImageAsync(imageProduct.ImageUrl);
+                        if (string.IsNullOrEmpty(imageUrl))
+                            throw new BadHttpRequestException(MessageConstant.ProductImage.UploadImageFail);
+                        var newProductImage = new ProductImage()
+                        {
+                            Id = Guid.NewGuid(),
+                            IsMain = imageProduct.IsMain,
+                            ImageUrl = imageUrl,
+                            ProductId = product.Id
+                        };
+                        await _unitOfWork.GetRepository<ProductImage>().InsertAsync(newProductImage);
+                    }
+                    else
+                    {
+                        var productImage = _mapper.Map<ProductImage>(imageProduct);
+                        productImage.Id = imageProduct.Id!.Value;
+                        productImage.ProductId = product.Id;
+                        _unitOfWork.GetRepository<ProductImage>().UpdateAsync(productImage);
+                    }
+                }
                 bool isSuccess = await _unitOfWork.CommitAsync() > 0;
                 transactionScope.Complete();
                 GetProductResponse productResponse = null;

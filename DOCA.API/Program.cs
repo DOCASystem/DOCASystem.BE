@@ -28,8 +28,8 @@ try
     builder.Services.AddServices(builder.Configuration);
     builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-    
-    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSettings();
+    builder.Services.AddEndpointsApiExplorer(); 
     builder.Services.AddAuthorization();
     builder.Services.AddControllers();
     builder.Services.AddJwtAuthentication();

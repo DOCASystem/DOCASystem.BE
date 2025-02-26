@@ -10,4 +10,8 @@
     <ProjectReference Include="..\DOCA.Domain\DOCA.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Minio" Version="6.0.4" />
+  </ItemGroup>
+
 </Project>

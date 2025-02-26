@@ -1,6 +1,7 @@
 using System.Text;
 using DOCA.API.Services.Implement;
 using DOCA.API.Services.Interface;
+using DOCA.Domain.Configuration;
 using DOCA.Domain.Models;
 using DOCA.Repository.Implement;
 using DOCA.Repository.Interfaces;
@@ -31,6 +32,15 @@ public static class DependencyService
         service.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         service.AddScoped<DbContext, DOCADbContext>();
         
+        return service;
+    }
+
+    public static IServiceCollection AddSettings(this IServiceCollection service)
+    {
+        IConfiguration configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true).Build();
+        service.Configure<AwsSettings>(configuration.GetSection("Aws"));
+        service.AddScoped<IUploadService, UploadService>();
         return service;
     }
     public static IServiceCollection AddRedis(this IServiceCollection services, IConfiguration configuration)

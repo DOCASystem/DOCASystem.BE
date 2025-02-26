@@ -18,12 +18,12 @@ namespace DOCA.API.Services.Implement;
 public class AnimalService : BaseService<AnimalService>, IAnimalService
 {
     private IConfiguration _configuration;
-    // private IFirebaseService _firebaseService;
+    private IUploadService _uploadService;
     private IRedisService _redisService;
-    public AnimalService(IUnitOfWork<DOCADbContext> unitOfWork, ILogger<AnimalService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor, IConfiguration configuration, IRedisService redisService) : base(unitOfWork, logger, mapper, httpContextAccessor, configuration)
+    public AnimalService(IUnitOfWork<DOCADbContext> unitOfWork, ILogger<AnimalService> logger, IMapper mapper, IHttpContextAccessor httpContextAccessor, IConfiguration configuration, IRedisService redisService, IUploadService uploadService) : base(unitOfWork, logger, mapper, httpContextAccessor, configuration)
     {
         _configuration = configuration;
-        // _firebaseService = firebaseService;
+        _uploadService = uploadService;
         _redisService = redisService;
     }
 
@@ -114,35 +114,35 @@ public class AnimalService : BaseService<AnimalService>, IAnimalService
                     }
                 }
 
-                // var mainImageUrl = await _firebaseService.UploadFileToFirebaseAsync(request.MainImage);
-                // if (!string.IsNullOrEmpty(mainImageUrl))
-                // {
-                //     await _unitOfWork.GetRepository<AnimalImage>().InsertAsync(new AnimalImage()
-                //     {
-                //         Id = Guid.NewGuid(),
-                //         AnimalId = animal.Id,
-                //         ImageUrl = mainImageUrl,
-                //         IsMain = true
-                //     });
-                // }   
+                var mainImageUrl = await _uploadService.UploadImageAsync(request.MainImage);
+                if (!string.IsNullOrEmpty(mainImageUrl))
+                {
+                    await _unitOfWork.GetRepository<AnimalImage>().InsertAsync(new AnimalImage()
+                    {
+                        Id = Guid.NewGuid(),
+                        AnimalId = animal.Id,
+                        ImageUrl = mainImageUrl,
+                        IsMain = true
+                    });
+                }   
 
-                // if (request.SecondaryImages != null)
-                // {
-                //     var imageUrls = await _firebaseService.UploadFilesToFirebaseAsync(request.SecondaryImages);
-                //     if (imageUrls.Any())
-                //     {
-                //         foreach (var imageUrl in imageUrls)
-                //         {
-                //             await _unitOfWork.GetRepository<AnimalImage>().InsertAsync(new AnimalImage()
-                //             {
-                //                 Id = Guid.NewGuid(),
-                //                 AnimalId = animal.Id,
-                //                 ImageUrl = imageUrl,
-                //                 IsMain = false
-                //             });
-                //         }
-                //     }
-                // }
+                if (request.SecondaryImages != null)
+                {
+                    var imageUrls = await _uploadService.UploadImageAsync(request.SecondaryImages);
+                    if (imageUrls.Any())
+                    {
+                        foreach (var imageUrl in imageUrls)
+                        {
+                            await _unitOfWork.GetRepository<AnimalImage>().InsertAsync(new AnimalImage()
+                            {
+                                Id = Guid.NewGuid(),
+                                AnimalId = animal.Id,
+                                ImageUrl = imageUrl,
+                                IsMain = false
+                            });
+                        }
+                    }
+                }
                 await _unitOfWork.GetRepository<Animal>().InsertAsync(animal);
                 bool isSuccess = await _unitOfWork.CommitAsync() > 0;
                 if (!isSuccess) return null;
@@ -257,30 +257,30 @@ public class AnimalService : BaseService<AnimalService>, IAnimalService
                     );
                     _unitOfWork.GetRepository<AnimalImage>().DeleteAsync(animalImage);
                 }
-                // foreach (var imageAnimal in request)
-                // {
-                //     if (imageAnimal.Id == null)
-                //     {
-                //         var imageUrl = await _firebaseService.UploadFileToFirebaseAsync(imageAnimal.ImageUrl);
-                //         if (string.IsNullOrEmpty(imageUrl))
-                //             throw new BadHttpRequestException(MessageConstant.ProductImage.UploadImageFail);
-                //         var newAnimalImage = new AnimalImage()
-                //         {
-                //             Id = Guid.NewGuid(),
-                //             IsMain = imageAnimal.IsMain,
-                //             ImageUrl = imageUrl,
-                //             AnimalId = animal.Id
-                //         };
-                //         await _unitOfWork.GetRepository<AnimalImage>().InsertAsync(newAnimalImage);
-                //     }
-                //     else
-                //     {
-                //         var animalImage = _mapper.Map<AnimalImage>(imageAnimal);
-                //         animalImage.Id = imageAnimal.Id!.Value;
-                //         animalImage.AnimalId = animal.Id;
-                //         _unitOfWork.GetRepository<AnimalImage>().UpdateAsync(animalImage);
-                //     }
-                // }
+                foreach (var imageAnimal in request)
+                {
+                    if (imageAnimal.Id == null)
+                    {
+                        var imageUrl = await _uploadService.UploadImageAsync(imageAnimal.ImageUrl);
+                        if (string.IsNullOrEmpty(imageUrl))
+                            throw new BadHttpRequestException(MessageConstant.ProductImage.UploadImageFail);
+                        var newAnimalImage = new AnimalImage()
+                        {
+                            Id = Guid.NewGuid(),
+                            IsMain = imageAnimal.IsMain,
+                            ImageUrl = imageUrl,
+                            AnimalId = animal.Id
+                        };
+                        await _unitOfWork.GetRepository<AnimalImage>().InsertAsync(newAnimalImage);
+                    }
+                    else
+                    {
+                        var animalImage = _mapper.Map<AnimalImage>(imageAnimal);
+                        animalImage.Id = imageAnimal.Id!.Value;
+                        animalImage.AnimalId = animal.Id;
+                        _unitOfWork.GetRepository<AnimalImage>().UpdateAsync(animalImage);
+                    }
+                }
                 bool isSuccess = await _unitOfWork.CommitAsync() > 0;
                 transactionScope.Complete();
                 GetAnimalResponse animalResponse = null;

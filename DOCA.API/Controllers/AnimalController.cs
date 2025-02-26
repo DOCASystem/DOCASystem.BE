@@ -42,7 +42,7 @@ public class AnimalController : BaseController<AnimalController>
     [ProducesResponseType(typeof(GetAnimalResponse), statusCode: StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), statusCode: StatusCodes.Status500InternalServerError)]
     [CustomAuthorize(RoleEnum.Manager, RoleEnum.Staff)]
-    public async Task<IActionResult> CreateAnimal([FromBody] CreateAnimalRequest request)
+    public async Task<IActionResult> CreateAnimal([FromForm] CreateAnimalRequest request)
     {
         var response = await _animalService.CreateAnimalAsync(request);
         if (response == null)

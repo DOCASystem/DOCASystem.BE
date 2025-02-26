@@ -14,6 +14,6 @@ public class CreateBlogRequest
     public BlogEnum Status { get; set; }
     public List<Guid>? BlogCategoryIds { get; set; }
     [Required]
-    public string MainImage { get; set; }
-    public List<string>? SecondaryImages { get; set; }
+    public IFormFile MainImage { get; set; }
+    public List<IFormFile>? SecondaryImages { get; set; }
 }
