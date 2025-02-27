@@ -2,9 +2,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DOCA.API.Payload.Request.Product;
 
-public class ImageProductRequest
+public class AddImageProductRequest
 {
-    public Guid? Id { get; set; }
     [Required]
     public IFormFile ImageUrl { get; set; }
     [Required]

@@ -68,19 +68,35 @@ public class ProductController : BaseController<ProductController>
         return Ok(response);
     }
     
-    [HttpPatch(ApiEndPointConstant.Product.ProductImage)]
+    [HttpPost(ApiEndPointConstant.Product.ProductImage)]
+    [ProducesResponseType(typeof(GetProductResponse), statusCode: StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(string), statusCode: StatusCodes.Status500InternalServerError)]
+    [CustomAuthorize(RoleEnum.Manager, RoleEnum.Staff)]
+    public async Task<IActionResult> AddProductImage(Guid id, [FromForm] ICollection<AddImageProductRequest> request)
+    {
+        var response = await _productService.AddProductImageByProductIdAsync(id, request);
+        if (response == null)
+        {
+            _logger.LogError($"Add product image failed with {id}");
+            return Problem($"{MessageConstant.ProductImage.AddProductImageFail}: {id}");
+        }
+        _logger.LogInformation($"Add product image successful with {id}");
+        return Ok(response);
+    }
+    
+    [HttpDelete(ApiEndPointConstant.Product.ProductImage)]
     [ProducesResponseType(typeof(GetProductResponse), statusCode: StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), statusCode: StatusCodes.Status500InternalServerError)]
     [CustomAuthorize(RoleEnum.Manager, RoleEnum.Staff)]
-    public async Task<IActionResult> UpdateProductImage(Guid id, [FromForm] ICollection<ImageProductRequest> request)
+    public async Task<IActionResult> DeleteProductImage(Guid id, [FromForm] ICollection<DeleteImageProductRequest> request)
     {
-        var response = await _productService.UpdateProductImageByProductIdAsync(id, request);
+        var response = await _productService.DeleteProductImageByProductIdAsync(id, request);
         if (response == null)
         {
-            _logger.LogError($"Update product image failed with {id}");
+            _logger.LogError($"Delete product image failed with {id}");
             return Problem($"{MessageConstant.ProductImage.AddProductImageFail}: {id}");
         }
-        _logger.LogInformation($"Update product image successful with {id}");
+        _logger.LogInformation($"Delete product image successful with {id}");
         return Ok(response);
     }
 }

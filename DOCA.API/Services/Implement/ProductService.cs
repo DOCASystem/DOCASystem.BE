@@ -288,8 +288,8 @@ public class ProductService : BaseService<ProductService>, IProductService
         return productResponse;
     }
     
-    public async Task<GetProductResponse> UpdateProductImageByProductIdAsync(Guid productId,
-        ICollection<ImageProductRequest> request)
+    public async Task<GetProductResponse> AddProductImageByProductIdAsync(Guid productId,
+        ICollection<AddImageProductRequest> images)
     {
         if (productId == Guid.Empty) throw new BadHttpRequestException(MessageConstant.Product.ProductIdNotNull);
         var product = await _unitOfWork.GetRepository<Product>().SingleOrDefaultAsync(
@@ -300,57 +300,91 @@ public class ProductService : BaseService<ProductService>, IProductService
         );
         if (product == null) throw new BadHttpRequestException(MessageConstant.Product.ProductNotFound);
         
-        if(request.Where(pi => pi.IsMain).ToList().Count != 1)
+        if(images.Where(pi => pi.IsMain).ToList().Count != 1 && product.ProductImages == null)
             throw new BadHttpRequestException(MessageConstant.ProductImage.WrongMainImageQuantity);
-        var requestProductImagesId = request
-            .Where(pi => pi.Id != null)
-            .Select(pi => pi.Id!.Value).ToList();
-
-        var ProductImageIds = await _unitOfWork.GetRepository<ProductImage>().GetListAsync(
-            predicate: pi => pi.ProductId == productId && !requestProductImagesId.Contains(pi.Id)
-        );
-        var removedProductImageIds = ProductImageIds.Select(pi => pi.Id).ToList();
         using (var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
         {
             try
             {
-                foreach (var removeProductImageId in removedProductImageIds)
+                foreach (var imageProduct in images)
                 {
-                    var productImage = await _unitOfWork.GetRepository<ProductImage>().SingleOrDefaultAsync(
-                        predicate: pi => pi.Id == removeProductImageId,
-                        include:pi => pi.Include(pi => pi.Product)
-                    );
-                    _unitOfWork.GetRepository<ProductImage>().DeleteAsync(productImage);
-                }
-                foreach (var imageProduct in request)
-                {
-                    if (imageProduct.Id == null)
+                    var imageUrl = await _uploadService.UploadImageAsync(imageProduct.ImageUrl);
+                    if (string.IsNullOrEmpty(imageUrl))
+                        throw new BadHttpRequestException(MessageConstant.ProductImage.UploadImageFail);
+                    var newProductImage = new ProductImage()
                     {
-                        var imageUrl = await _uploadService.UploadImageAsync(imageProduct.ImageUrl);
-                        if (string.IsNullOrEmpty(imageUrl))
-                            throw new BadHttpRequestException(MessageConstant.ProductImage.UploadImageFail);
-                        var newProductImage = new ProductImage()
+                        Id = Guid.NewGuid(),
+                        IsMain = imageProduct.IsMain,
+                        ImageUrl = imageUrl,
+                        ProductId = product.Id
+                    };
+                    if (newProductImage.IsMain)
+                    {
+                        var imageMainOld = await _unitOfWork.GetRepository<ProductImage>().SingleOrDefaultAsync(
+                            predicate: a => a.IsMain == true && a.ProductId == product.Id
+                        );
+
+                        if (imageMainOld != null) 
                         {
-                            Id = Guid.NewGuid(),
-                            IsMain = imageProduct.IsMain,
-                            ImageUrl = imageUrl,
-                            ProductId = product.Id
-                        };
-                        await _unitOfWork.GetRepository<ProductImage>().InsertAsync(newProductImage);
+                            imageMainOld.IsMain = false;
+                            _unitOfWork.GetRepository<ProductImage>().UpdateAsync(imageMainOld);
+                        }
                     }
-                    else
-                    {
-                        var productImage = _mapper.Map<ProductImage>(imageProduct);
-                        productImage.Id = imageProduct.Id!.Value;
-                        productImage.ProductId = product.Id;
-                        _unitOfWork.GetRepository<ProductImage>().UpdateAsync(productImage);
-                    }
+                    await _unitOfWork.GetRepository<ProductImage>().InsertAsync(newProductImage);
+                    var productImage = _mapper.Map<ProductImage>(imageProduct);
+                    productImage.ProductId = product.Id;
+                    _unitOfWork.GetRepository<ProductImage>().UpdateAsync(productImage); 
                 }
                 bool isSuccess = await _unitOfWork.CommitAsync() > 0;
                 transactionScope.Complete();
                 GetProductResponse productResponse = null;
                 if (isSuccess) productResponse = _mapper.Map<GetProductResponse>(product);
                 return productResponse;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+                return null;
+            }
+        }
+    }
+
+
+    public async Task<GetProductResponse> DeleteProductImageByProductIdAsync(Guid productId,
+        ICollection<DeleteImageProductRequest> images)
+    {
+        if (productId == Guid.Empty) throw new BadHttpRequestException(MessageConstant.Product.ProductIdNotNull);
+        var product = await _unitOfWork.GetRepository<Product>().SingleOrDefaultAsync(
+            predicate: p => p.Id == productId,
+            include: p => p.Include(p => p.ProductImages)
+                .Include(p => p.ProductCategories)
+                .ThenInclude(p => p.Category)
+            
+        );
+        if (product == null) throw new BadHttpRequestException(MessageConstant.Product.ProductNotFound);
+        using (var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+        {
+            try
+            {
+                foreach (var imageProduct in images)
+                {
+                    if (imageProduct.Id == Guid.Empty)
+                        throw new BadHttpRequestException(MessageConstant.ProductImage.ProductImageIdNotNull);
+                    var image = await _unitOfWork.GetRepository<ProductImage>().SingleOrDefaultAsync(
+                        predicate: p => p.ProductId == product.Id && p.Id == imageProduct.Id
+                    );
+                    if (image == null)
+                        throw new BadHttpRequestException(MessageConstant.ProductImage.ProductImageNotFound);
+                    if (image.IsMain)
+                        throw new BadHttpRequestException(MessageConstant.ProductImage.DeleteProductImageFail);
+                    _unitOfWork.GetRepository<ProductImage>().DeleteAsync(image);
+                }
+
+                bool isSuccess = await _unitOfWork.CommitAsync() > 0;
+                transactionScope.Complete();
+                GetProductResponse getProductResponse = null;
+                if (isSuccess) getProductResponse = _mapper.Map<GetProductResponse>(product);
+                return getProductResponse;
             }
             catch (Exception e)
             {

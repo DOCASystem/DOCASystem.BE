@@ -70,8 +70,8 @@ public class AnimalController : BaseController<AnimalController>
         return Ok(response);
     }
     
-    [HttpPatch(ApiEndPointConstant.Animal.AnimalImage)]
-    [ProducesResponseType(typeof(GetAnimalResponse), statusCode: StatusCodes.Status200OK)]
+    [HttpPost(ApiEndPointConstant.Animal.AnimalImage)]
+    [ProducesResponseType(typeof(GetAnimalResponse), statusCode: StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), statusCode: StatusCodes.Status500InternalServerError)]
     [CustomAuthorize(RoleEnum.Manager, RoleEnum.Staff)]
     public async Task<IActionResult> AddAnimalImage(Guid id, [FromForm] ICollection<AddImageAnimalRequest> images)

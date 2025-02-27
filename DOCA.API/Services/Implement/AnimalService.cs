@@ -235,7 +235,7 @@ public class AnimalService : BaseService<AnimalService>, IAnimalService
         );
         if (animal == null) throw new BadHttpRequestException(MessageConstant.Animal.AnimalNotFound);
         
-        if(request.Where(ai => ai.IsMain).ToList().Count != 1)
+        if(request.Where(ai => ai.IsMain).ToList().Count != 1 && animal.AnimalImage == null)
             throw new BadHttpRequestException(MessageConstant.AnimalImage.WrongMainImageQuantity);
         using (var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
         {
@@ -245,7 +245,7 @@ public class AnimalService : BaseService<AnimalService>, IAnimalService
                 {
                     var imageUrl = await _uploadService.UploadImageAsync(imageAnimal.ImageUrl);
                     if (string.IsNullOrEmpty(imageUrl))
-                        throw new BadHttpRequestException(MessageConstant.ProductImage.UploadImageFail);
+                        throw new BadHttpRequestException(MessageConstant.AnimalImage.UploadImageFail);
                     var newAnimalImage = new AnimalImage()
                     {
                         Id = Guid.NewGuid(),
