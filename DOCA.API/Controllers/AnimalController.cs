@@ -48,7 +48,7 @@ public class AnimalController : BaseController<AnimalController>
         if (response == null)
         {
             _logger.LogError($"Create new animal failed with {request.Name}");
-            return Problem($"{MessageConstant.Product.CreateProductFail}: {request.Name}");
+            return Problem($"{MessageConstant.Animal.CreateAnimalFail}: {request.Name}");
         }
         _logger.LogInformation($"Create new animal successful with {request.Name}");
         return CreatedAtAction(nameof(CreateAnimal), response);
@@ -64,7 +64,7 @@ public class AnimalController : BaseController<AnimalController>
         if (response == null)
         {
             _logger.LogError($"Update animal failed with {id}");
-            return Problem($"{MessageConstant.Product.UpdateProductFail}: {id}");
+            return Problem($"{MessageConstant.Animal.UpdateAnimalFail}: {id}");
         }
         _logger.LogInformation($"Update animal successful with {id}");
         return Ok(response);
@@ -74,15 +74,31 @@ public class AnimalController : BaseController<AnimalController>
     [ProducesResponseType(typeof(GetAnimalResponse), statusCode: StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), statusCode: StatusCodes.Status500InternalServerError)]
     [CustomAuthorize(RoleEnum.Manager, RoleEnum.Staff)]
-    public async Task<IActionResult> UpdateAnimalImage(Guid id, [FromBody] ICollection<ImageAnimalRequest> request)
+    public async Task<IActionResult> AddAnimalImage(Guid id, [FromForm] ICollection<AddImageAnimalRequest> images)
     {
-        var response = await _animalService.UpdateAnimalImageByAnimalIdAsync(id, request);
+        var response = await _animalService.AddAnimalImageByAnimalIdAsync(id, images);
         if (response == null)
         {
-            _logger.LogError($"Update animal image failed with {id}");
-            return Problem($"{MessageConstant.ProductImage.AddProductImageFail}: {id}");
+            _logger.LogError($"Add animal image failed with {id}");
+            return Problem($"{MessageConstant.AnimalImage.AddAnimalImageFail}: {id}");
         }
-        _logger.LogInformation($"Update animal image successful with {id}");
+        _logger.LogInformation($"Add animal image successful with {id}");
+        return Ok(response);
+    }
+    
+    [HttpDelete(ApiEndPointConstant.Animal.AnimalImage)]
+    [ProducesResponseType(typeof(GetAnimalResponse), statusCode: StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), statusCode: StatusCodes.Status500InternalServerError)]
+    [CustomAuthorize(RoleEnum.Manager, RoleEnum.Staff)]
+    public async Task<IActionResult> DeleteAnimalImage(Guid id, [FromBody] ICollection<DeleteImageAnimalRequest> images)
+    {
+        var response = await _animalService.DeleteAnimalImageByAnimalIdAsync(id, images);
+        if (response == null)
+        {
+            _logger.LogError($"Delete animal image failed with {id}");
+            return Problem($"{MessageConstant.AnimalImage.DeleteAnimalImageFail}: {id}");
+        }
+        _logger.LogInformation($"Delete animal image successful with {id}");
         return Ok(response);
     }
     

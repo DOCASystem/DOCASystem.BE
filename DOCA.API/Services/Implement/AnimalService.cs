@@ -224,7 +224,7 @@ public class AnimalService : BaseService<AnimalService>, IAnimalService
         return responses;
     }
 
-    public async Task<GetAnimalResponse> UpdateAnimalImageByAnimalIdAsync(Guid animalId, ICollection<ImageAnimalRequest> request)
+    public async Task<GetAnimalResponse> AddAnimalImageByAnimalIdAsync(Guid animalId, ICollection<AddImageAnimalRequest> request)
     {
         if (animalId == Guid.Empty) throw new BadHttpRequestException(MessageConstant.Animal.AnimalIdNotNull);
         var animal = await _unitOfWork.GetRepository<Animal>().SingleOrDefaultAsync(
@@ -237,49 +237,82 @@ public class AnimalService : BaseService<AnimalService>, IAnimalService
         
         if(request.Where(ai => ai.IsMain).ToList().Count != 1)
             throw new BadHttpRequestException(MessageConstant.AnimalImage.WrongMainImageQuantity);
-        var requestAnimalImagesId = request
-            .Where(ai => ai.Id != null)
-            .Select(ai => ai.Id!.Value).ToList();
-
-        var AnimalImageIds = await _unitOfWork.GetRepository<AnimalImage>().GetListAsync(
-            predicate: ai => ai.AnimalId == animalId && !requestAnimalImagesId.Contains(ai.Id)
-        );
-        var removedAnimalImageIds = AnimalImageIds.Select(ai => ai.Id).ToList();
         using (var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
         {
             try
             {
-                foreach (var removedAnimalImageId in removedAnimalImageIds)
-                {
-                    var animalImage = await _unitOfWork.GetRepository<AnimalImage>().SingleOrDefaultAsync(
-                        predicate: ai => ai.Id == removedAnimalImageId,
-                        include:ai => ai.Include(ai => ai.Animal)
-                    );
-                    _unitOfWork.GetRepository<AnimalImage>().DeleteAsync(animalImage);
-                }
                 foreach (var imageAnimal in request)
                 {
-                    if (imageAnimal.Id == null)
+                    var imageUrl = await _uploadService.UploadImageAsync(imageAnimal.ImageUrl);
+                    if (string.IsNullOrEmpty(imageUrl))
+                        throw new BadHttpRequestException(MessageConstant.ProductImage.UploadImageFail);
+                    var newAnimalImage = new AnimalImage()
                     {
-                        var imageUrl = await _uploadService.UploadImageAsync(imageAnimal.ImageUrl);
-                        if (string.IsNullOrEmpty(imageUrl))
-                            throw new BadHttpRequestException(MessageConstant.ProductImage.UploadImageFail);
-                        var newAnimalImage = new AnimalImage()
+                        Id = Guid.NewGuid(),
+                        IsMain = imageAnimal.IsMain,
+                        ImageUrl = imageUrl,
+                        AnimalId = animal.Id
+                    };
+                    if (newAnimalImage.IsMain)
+                    {
+                        var imageMainOld = await _unitOfWork.GetRepository<AnimalImage>().SingleOrDefaultAsync(
+                            predicate: a => a.IsMain == true && a.AnimalId == animal.Id
+                        );
+
+                        if (imageMainOld != null) 
                         {
-                            Id = Guid.NewGuid(),
-                            IsMain = imageAnimal.IsMain,
-                            ImageUrl = imageUrl,
-                            AnimalId = animal.Id
-                        };
-                        await _unitOfWork.GetRepository<AnimalImage>().InsertAsync(newAnimalImage);
+                            imageMainOld.IsMain = false;
+                            _unitOfWork.GetRepository<AnimalImage>().UpdateAsync(imageMainOld);
+                        }
                     }
-                    else
+                    await _unitOfWork.GetRepository<AnimalImage>().InsertAsync(newAnimalImage);
+                    var animalImage = _mapper.Map<AnimalImage>(imageAnimal);
+                    animalImage.AnimalId = animal.Id;
+                    _unitOfWork.GetRepository<AnimalImage>().UpdateAsync(animalImage);    
+                }
+                bool isSuccess = await _unitOfWork.CommitAsync() > 0;
+                transactionScope.Complete();
+                GetAnimalResponse animalResponse = null;
+                if (isSuccess) animalResponse = _mapper.Map<GetAnimalResponse>(animal);
+                return animalResponse;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+                return null;
+            }
+        }
+    }
+    
+    public async Task<GetAnimalResponse> DeleteAnimalImageByAnimalIdAsync(Guid animalId, ICollection<DeleteImageAnimalRequest> request)
+    {
+        if (animalId == Guid.Empty) throw new BadHttpRequestException(MessageConstant.Animal.AnimalIdNotNull);
+        var animal = await _unitOfWork.GetRepository<Animal>().SingleOrDefaultAsync(
+            predicate: x => x.Id == animalId,
+            include: a => a.Include(a => a.AnimalImage)
+                .Include(a => a.AnimalCategoryRelationship)
+                .ThenInclude(ac => ac.AnimalCategory)
+        );
+        if (animal == null) throw new BadHttpRequestException(MessageConstant.Animal.AnimalNotFound);
+        using (var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+        {
+            try
+            {
+                foreach (var imageAnimal in request)
+                {
+                    if(imageAnimal.Id == Guid.Empty) throw new BadHttpRequestException(MessageConstant.AnimalImage.AnimalImageIdNotNull);
+                    var image = await _unitOfWork.GetRepository<AnimalImage>().SingleOrDefaultAsync(
+                        predicate: a => a.Id == imageAnimal.Id && a.AnimalId == animal.Id
+                    );
+                    if (image == null)
                     {
-                        var animalImage = _mapper.Map<AnimalImage>(imageAnimal);
-                        animalImage.Id = imageAnimal.Id!.Value;
-                        animalImage.AnimalId = animal.Id;
-                        _unitOfWork.GetRepository<AnimalImage>().UpdateAsync(animalImage);
+                        throw new BadHttpRequestException(MessageConstant.AnimalImage.AnimalImageNotFound);
                     }
+                    if (image.IsMain)
+                    {
+                        throw new BadHttpRequestException(MessageConstant.AnimalImage.DeleteAnimalImageFail);
+                    } 
+                    _unitOfWork.GetRepository<AnimalImage>().DeleteAsync(image);  
                 }
                 bool isSuccess = await _unitOfWork.CommitAsync() > 0;
                 transactionScope.Complete();

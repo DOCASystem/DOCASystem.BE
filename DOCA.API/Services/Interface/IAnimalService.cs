@@ -20,5 +20,7 @@ public interface IAnimalService
 
     // Task<GetAnimalResponse> DeleteAnimalImageById(Guid id);
 
-    Task<GetAnimalResponse> UpdateAnimalImageByAnimalIdAsync(Guid animalId, ICollection<ImageAnimalRequest> request);
+    Task<GetAnimalResponse> AddAnimalImageByAnimalIdAsync(Guid animalId, ICollection<AddImageAnimalRequest> request);
+    
+    Task<GetAnimalResponse> DeleteAnimalImageByAnimalIdAsync(Guid animalId, ICollection<DeleteImageAnimalRequest> request);
 }
