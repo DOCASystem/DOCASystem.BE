@@ -432,6 +432,9 @@ namespace DOCA.Domain.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("Volume")
+                        .HasColumnType("decimal(18,2)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Products");
@@ -539,7 +542,7 @@ namespace DOCA.Domain.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("82811516-70d1-49e7-b887-43c0bc9d72d3"),
+                            Id = new Guid("194cf289-39e7-41a7-8a5e-77515d21e4ac"),
                             FullName = "Admin",
                             Password = "jGl25bVBBBW96Qi9Te4V37Fnqchz/Eu4qB9vKrRIqRg=",
                             PhoneNumber = "0123456789",

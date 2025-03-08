@@ -75,7 +75,6 @@ public static class DependencyService
         services.AddScoped<IBlogService, BlogService>();
         services.AddScoped<IBlogCategoryService, BlogCategoryService>();
         services.AddScoped<ICartService, CartService>();
-        // services.AddScoped<IFirebaseService, FirebaseService>();
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IPaymentService, PaymentService>();
         return services;

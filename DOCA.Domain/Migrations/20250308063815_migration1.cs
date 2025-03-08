@@ -67,7 +67,8 @@ namespace DOCA.Domain.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsHindden = table.Column<bool>(type: "bit", nullable: false)
+                    IsHindden = table.Column<bool>(type: "bit", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -115,6 +116,7 @@ namespace DOCA.Domain.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Volume = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IsHidden = table.Column<bool>(type: "bit", nullable: false)
@@ -395,7 +397,7 @@ namespace DOCA.Domain.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "FullName", "Password", "PhoneNumber", "Role", "Username" },
-                values: new object[] { new Guid("f1fdc5bf-410b-408c-953f-b6915497e700"), "Admin", "jGl25bVBBBW96Qi9Te4V37Fnqchz/Eu4qB9vKrRIqRg=", "0123456789", "Manager", "admin" });
+                values: new object[] { new Guid("194cf289-39e7-41a7-8a5e-77515d21e4ac"), "Admin", "jGl25bVBBBW96Qi9Te4V37Fnqchz/Eu4qB9vKrRIqRg=", "0123456789", "Manager", "admin" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AnimalCategoryRelationship_AnimalCategoryId",

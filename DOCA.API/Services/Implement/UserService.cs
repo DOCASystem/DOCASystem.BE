@@ -111,7 +111,7 @@ public class UserService : BaseService<UserService>, IUserService
         var user = _mapper.Map<User>(request);
 
         // Kiểm tra OTP qua Redis Service
-        var key = request.PhoneNumber;
+        var key = request.Username;
         var existingOtp = await _redisService.GetStringAsync(key);
 
         if (string.IsNullOrEmpty(existingOtp))
