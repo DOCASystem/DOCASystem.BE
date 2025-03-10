@@ -98,6 +98,16 @@ public class BlogService : BaseService<BlogService>, IBlogService
                 if (category == null) throw new BadHttpRequestException(MessageConstant.BlogCategory.BlogCategoryNotFound);
             }
         }
+        
+        if (request.AnimalIds != null)
+        {
+            foreach (var AnimalId in request.AnimalIds)
+            {
+                var animal = await _unitOfWork.GetRepository<Animal>()
+                    .SingleOrDefaultAsync(predicate: c => c.Id.Equals(AnimalId));
+                if (animal == null) throw new BadHttpRequestException(MessageConstant.Animal.AnimalNotFound);
+            }
+        }
 
         using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
         {
