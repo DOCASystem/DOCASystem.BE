@@ -12,7 +12,9 @@ public class BlogMapper : Profile
         CreateMap<CreateBlogRequest, Blog>();
         CreateMap<Blog, GetBlogDetailResponse>()
             .ForMember(dest => dest.BlogCategories,
-                opt => opt.MapFrom(src => src.BlogCategoryRelationship!.Select(pc => pc.BlogCategory)));
+                opt => opt.MapFrom(src => src.BlogCategoryRelationship!.Select(pc => pc.BlogCategory)))
+            .ForMember(dest => dest.Animals,
+            opt => opt.MapFrom(src => src.BlogAnimal!.Select(pc => pc.Animal)));
         CreateMap<Blog, GetBlogResponse>();
     }
 }

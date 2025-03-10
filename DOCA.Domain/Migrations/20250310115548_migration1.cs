@@ -397,7 +397,7 @@ namespace DOCA.Domain.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "FullName", "Password", "PhoneNumber", "Role", "Username" },
-                values: new object[] { new Guid("194cf289-39e7-41a7-8a5e-77515d21e4ac"), "Admin", "jGl25bVBBBW96Qi9Te4V37Fnqchz/Eu4qB9vKrRIqRg=", "0123456789", "Manager", "admin" });
+                values: new object[] { new Guid("03378237-85b2-4066-bcde-02981905049a"), "Admin", "jGl25bVBBBW96Qi9Te4V37Fnqchz/Eu4qB9vKrRIqRg=", "0123456789", "Manager", "admin" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AnimalCategoryRelationship_AnimalCategoryId",

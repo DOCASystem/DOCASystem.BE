@@ -44,8 +44,11 @@ public class BlogService : BaseService<BlogService>, IBlogService
                     IsHindden = a.IsHindden,
                     BlogCategoryRelationship = 
                         a.BlogCategoryRelationship.Any(bcr => bcr.BlogId == a.Id) ? a.BlogCategoryRelationship : null,
+                    BlogAnimal = 
+                        a.BlogAnimal.Any(bcr => bcr.BlogId == a.Id) ? a.BlogAnimal : null,  
                 }, page: page, size: size,
-                include: a => a.Include(a => a.BlogCategoryRelationship).ThenInclude(arc => arc.BlogCategory), 
+                include: a => a.Include(a => a.BlogCategoryRelationship).ThenInclude(arc => arc.BlogCategory)
+                                            .Include(a=>a.BlogAnimal).ThenInclude(a=>a.Animal), 
                 filter: filter,
                 sortBy: sortBy, isAsc: isAsc);
         var response = _mapper.Map<IPaginate<GetBlogDetailResponse>>(blogs);
@@ -76,6 +79,19 @@ public class BlogService : BaseService<BlogService>, IBlogService
                     Description = c.Description,
                     CreatedAt = c.CreatedAt,
                     ModifiedAt = c.ModifiedAt,
+                })
+                .ToList(),
+            Animals = b.BlogAnimal.Select(ba=>ba.Animal)
+                .Select(c=> new GetAnimalResponse()
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    Description = c.Description,
+                    Age = c.Age,
+                    Sex = c.Sex,
+                    CreatedAt = c.CreatedAt,
+                    ModifiedAt = c.ModifiedAt,
+                    AnimalImage = c.AnimalImage
                 })
                 .ToList()
         };
@@ -118,7 +134,16 @@ public class BlogService : BaseService<BlogService>, IBlogService
                     foreach (var blogCategoryId in request.BlogCategoryIds)
                     {
                         await _unitOfWork.GetRepository<BlogCategoryRelationship>()
-                            .InsertAsync(new BlogCategoryRelationship() { BlogId = blog.Id, BlogCategoryId = blogCategoryId });
+                            .InsertAsync(new BlogCategoryRelationship() { BlogId = blog.Id, BlogCategoryId = blogCategoryId});
+                    }
+                }
+
+                if (request.AnimalIds != null)
+                {
+                    foreach (var animalId in request.AnimalIds)
+                    {
+                        await _unitOfWork.GetRepository<BlogAnimal>()
+                            .InsertAsync(new BlogAnimal() { AnimalId = animalId, BlogId = blog.Id});
                     }
                 }
                 await _unitOfWork.GetRepository<Blog>().InsertAsync(blog);

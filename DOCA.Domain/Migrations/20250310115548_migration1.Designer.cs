@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DOCA.Domain.Migrations
 {
     [DbContext(typeof(DOCADbContext))]
-    [Migration("20250308063815_migration1")]
+    [Migration("20250310115548_migration1")]
     partial class migration1
     {
         /// <inheritdoc />
@@ -545,7 +545,7 @@ namespace DOCA.Domain.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("194cf289-39e7-41a7-8a5e-77515d21e4ac"),
+                            Id = new Guid("03378237-85b2-4066-bcde-02981905049a"),
                             FullName = "Admin",
                             Password = "jGl25bVBBBW96Qi9Te4V37Fnqchz/Eu4qB9vKrRIqRg=",
                             PhoneNumber = "0123456789",

@@ -1,4 +1,5 @@
 using DOCA.API.Enums;
+using DOCA.API.Payload.Response.Animal;
 using DOCA.API.Payload.Response.BlogCategory;
 
 namespace DOCA.API.Payload.Response.Blog;
@@ -13,4 +14,5 @@ public class GetBlogDetailResponse
     public BlogEnum Status { get; set; }
     public bool IsHidden { get; set; }
     public virtual ICollection<BlogCategoryResponse>? BlogCategories { get; set; }
+    public virtual ICollection<GetAnimalResponse>? Animals { get; set; }
 }
