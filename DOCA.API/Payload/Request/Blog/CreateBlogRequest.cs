@@ -15,7 +15,7 @@ public class CreateBlogRequest
     public BlogEnum Status { get; set; }
     public List<Guid>? BlogCategoryIds { get; set; }
     public List<Guid>? AnimalIds { get; set; }
-    [Required]
-    public IFormFile MainImage { get; set; }
-    public List<IFormFile>? SecondaryImages { get; set; }
+    // [Required]
+    // public IFormFile MainImage { get; set; }
+    // public List<IFormFile>? SecondaryImages { get; set; }
 }

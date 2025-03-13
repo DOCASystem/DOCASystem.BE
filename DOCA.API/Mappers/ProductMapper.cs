@@ -9,6 +9,7 @@ public class ProductMapper : Profile
 {
     public ProductMapper()
     {
+        CreateMap<ProductImage, ProductImageResponse>();
         CreateMap<CreateProductRequest, Product>();
         CreateMap<Product, GetProductDetailResponse>()
             .ForMember(dest => dest.Categories, 
