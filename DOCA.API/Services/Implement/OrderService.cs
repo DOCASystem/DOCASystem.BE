@@ -95,12 +95,15 @@ public class OrderService : BaseService<OrderService>, IOrderService
     {
         if (orderId == Guid.Empty) throw new BadHttpRequestException(MessageConstant.Order.OrderIdNotNull);
 
-        var orderItems = await _unitOfWork.GetRepository<OrderItem>().SingleOrDefaultAsync(
+        var orderItems = await _unitOfWork.GetRepository<OrderItem>().GetListAsync(
             predicate: oi => oi.OrderId == orderId,
             include: oi => oi.Include(oi => oi.Product)
                 .ThenInclude(p => p.ProductImages)
+                .Include(oi => oi.Blog) 
         );
+
         var response = _mapper.Map<ICollection<OrderItemResponse>>(orderItems);
         return response;
     }
+
 }
