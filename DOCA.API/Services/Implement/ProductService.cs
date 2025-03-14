@@ -61,8 +61,13 @@ public class ProductService : BaseService<ProductService>, IProductService
     {
         if (id == Guid.Empty) throw new BadHttpRequestException(MessageConstant.Product.ProductIdNotNull);
         var role = GetRoleFromJwt();
-        var p = await _unitOfWork.GetRepository<Product>().SingleOrDefaultAsync(predicate: p => p.Id.Equals(id));
-        if (p.IsHidden && role != RoleEnum.Manager && role != RoleEnum.Staff)
+        var p = await _unitOfWork.GetRepository<Product>().SingleOrDefaultAsync(
+            predicate: p => p.Id.Equals(id),
+        include: source => source
+                .Include(p => p.ProductImages)
+                .Include(p => p.ProductCategories).ThenInclude(pc => pc.Category)
+            );
+        if (p.IsHidden && role != RoleEnum.Manager && role != RoleEnum.Staff && p == null)
             throw new BadHttpRequestException(MessageConstant.Product.ProductIsHidden);
         var productResponse = new GetProductDetailResponse()
         {
