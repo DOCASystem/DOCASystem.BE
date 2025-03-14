@@ -11,6 +11,6 @@ public class AnimalCategoryRelationship
     [ForeignKey(nameof(AnimalId))]
     public Animal Animal { get; set; }
     public Guid AnimalCategoryId { get; set; }
-    [ForeignKey(nameof(AnimalCategoryId))]
+    [ForeignKey(nameof(AnimalCategoryId))]    
     public AnimalCategory AnimalCategory { get; set; }
 }

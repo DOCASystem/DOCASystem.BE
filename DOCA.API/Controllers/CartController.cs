@@ -45,12 +45,27 @@ public class CartController : BaseController<CartController>
     [ProducesResponseType(typeof(ICollection<CartModelResponse>), statusCode: StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), statusCode: StatusCodes.Status500InternalServerError)]
     [CustomAuthorize(RoleEnum.Member)]
-    public async Task<IActionResult> RemoveFromCartAsync()
+    public async Task<IActionResult> CleanCartAsync()
     {
         var response = await _cartService.ClearCartAsync();
         if (response == null)
         {
             _logger.LogError($"Clear cart failed");
+            return Problem($"{MessageConstant.Cart.CartItemIsNull}");
+        }
+        _logger.LogInformation($"Remove from cart successful");
+        return Ok(response);
+    }
+    [HttpDelete(ApiEndPointConstant.Cart.RemoveCartEndPoint)]
+    [ProducesResponseType(typeof(ICollection<CartModelResponse>), statusCode: StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), statusCode: StatusCodes.Status500InternalServerError)]
+    [CustomAuthorize(RoleEnum.Member)]
+    public async Task<IActionResult> RemoveFromCartAsync(Guid id)
+    {
+        var response = await _cartService.RemoveFromCartAsync(id);
+        if (response == null)
+        {
+            _logger.LogError($"Remove from cart failed");
             return Problem($"{MessageConstant.Cart.CartItemIsNull}");
         }
         _logger.LogInformation($"Remove from cart successful");

@@ -89,6 +89,7 @@ public class ApiEndPointConstant
     public class Cart
     {
         public const string CartEndPoint = ApiEndpoint + "/carts";
+        public const string RemoveCartEndPoint = CartEndPoint + "/{id}";
     }
     
     public class Payment

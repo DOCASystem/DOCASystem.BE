@@ -39,8 +39,8 @@ public class PaymentService : BaseService<PaymentService>, IPaymentService
             include: m => m.Include(m => m.User)
             );
         if (member == null) throw new UnauthorizedAccessException(MessageConstant.User.UserNotFound);
-        if( member.Commune == null || member.Province == null || member.District == null || member.Address == null) 
-            throw new BadHttpRequestException(MessageConstant.User.MemberAddressNotFound);
+        // if( member.Commune == null || member.Province == null || member.District == null || member.Address == null) 
+        //     throw new BadHttpRequestException(MessageConstant.User.MemberAddressNotFound);
         
         var key = "Cart:" + userId;
         var cartData = await _redisService.GetStringAsync(key);
