@@ -54,9 +54,14 @@ public class AnimalService : BaseService<AnimalService>, IAnimalService
     {
         if (id == Guid.Empty) throw new BadHttpRequestException(MessageConstant.Animal.AnimalIdNotNull);
         var role = GetRoleFromJwt();
-        var a = await _unitOfWork.GetRepository<Animal>().SingleOrDefaultAsync(predicate: a => a.Id.Equals(id));
-        if ( role != RoleEnum.Manager && role != RoleEnum.Staff)
-            throw new BadHttpRequestException(MessageConstant.Animal.AnimalNotFound);
+        var a = await _unitOfWork.GetRepository<Animal>().SingleOrDefaultAsync(
+            predicate: a => a.Id == id,
+            include: source => source
+                .Include(p => p.AnimalImage)
+                .Include(p => p.AnimalCategoryRelationship).ThenInclude(pc => pc.AnimalCategory)
+            );
+        // if ( role != RoleEnum.Manager && role != RoleEnum.Staff)
+        //     throw new BadHttpRequestException(MessageConstant.Animal.AnimalNotFound);
         var animalResponse = new GetAnimalDetailResponse()
         {
             Id = a.Id,
@@ -93,11 +98,11 @@ public class AnimalService : BaseService<AnimalService>, IAnimalService
         decimal expectedPrice = 0;
         if (request.AnimalcategoryIds != null)
         {
-            foreach (var animalcategoryId in request.AnimalcategoryIds)
+            foreach (var categoryId in request.AnimalcategoryIds)
             {
                 var category = await _unitOfWork.GetRepository<AnimalCategory>()
-                    .SingleOrDefaultAsync(predicate: c => c.Id.Equals(animalcategoryId));
-                if (category == null) throw new BadHttpRequestException(MessageConstant.Animal.AnimalNotFound);
+                    .SingleOrDefaultAsync(predicate: c => c.Id.Equals(categoryId));
+                if (category == null) throw new BadHttpRequestException(MessageConstant.Category.CategoryNotFound);
             }
         }
 
@@ -107,10 +112,10 @@ public class AnimalService : BaseService<AnimalService>, IAnimalService
             {
                 if (request.AnimalcategoryIds != null)
                 {
-                    foreach (var animalcategoryId in request.AnimalcategoryIds)
+                    foreach (var categoryId in request.AnimalcategoryIds)
                     {
                         await _unitOfWork.GetRepository<AnimalCategoryRelationship>()
-                            .InsertAsync(new AnimalCategoryRelationship() { AnimalId = animal.Id, AnimalCategoryId = animalcategoryId });
+                            .InsertAsync(new AnimalCategoryRelationship() { AnimalId = animal.Id, AnimalCategoryId = categoryId });
                     }
                 }
 
@@ -124,7 +129,7 @@ public class AnimalService : BaseService<AnimalService>, IAnimalService
                         ImageUrl = mainImageUrl,
                         IsMain = true
                     });
-                }   
+                }
 
                 if (request.SecondaryImages != null)
                 {

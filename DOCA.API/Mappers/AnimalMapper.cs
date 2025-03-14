@@ -10,6 +10,7 @@ public class AnimalMapper : Profile
 {
     public AnimalMapper()
     {
+        CreateMap<AnimalImage, AnimalImageResponse>();
         CreateMap<CreateAnimalRequest, Animal>();
         CreateMap<Animal, GetAnimalDetailResponse>()
             .ForMember(dest => dest.AnimalCategories, 
