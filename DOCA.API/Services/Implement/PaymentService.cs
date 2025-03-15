@@ -148,8 +148,8 @@ public class PaymentService : BaseService<PaymentService>, IPaymentService
                     (int)order.Total, 
                     "Thanh toán đơn hàng", 
                     items, 
-                    "https://stemlabs.store/cancel", 
-                    "https://stemlabs.store/success",
+                    "https://doca.love/", 
+                    "https://doca.love/",
                     buyerName: member.User.FullName, 
                     buyerPhone: member.User.PhoneNumber,
                     expiredAt: ((DateTimeOffset) TimeUtil.GetCurrentSEATime().AddMinutes(10)).ToUnixTimeSeconds()
