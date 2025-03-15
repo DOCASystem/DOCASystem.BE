@@ -59,9 +59,12 @@ public class BlogService : BaseService<BlogService>, IBlogService
     {
         if (id == Guid.Empty) throw new BadHttpRequestException(MessageConstant.Blog.BlogIdNotNull);
         var role = GetRoleFromJwt();
-        var b = await _unitOfWork.GetRepository<Blog>().SingleOrDefaultAsync(predicate: b => b.Id.Equals(id));
-        if ( role != RoleEnum.Manager && role != RoleEnum.Staff)
-            throw new BadHttpRequestException(MessageConstant.Blog.BlogNotFound);
+        var b = await _unitOfWork.GetRepository<Blog>().SingleOrDefaultAsync(
+            predicate: b => b.Id.Equals(id),
+            include: a => a.Include(a => a.BlogCategoryRelationship).ThenInclude(arc => arc.BlogCategory)
+                .Include(a=>a.BlogAnimal).ThenInclude(a=>a.Animal));
+        // if ( role != RoleEnum.Manager && role != RoleEnum.Staff)
+        //     throw new BadHttpRequestException(MessageConstant.Blog.BlogNotFound);
         var response = new GetBlogDetailResponse()
         {
             Id = b.Id,

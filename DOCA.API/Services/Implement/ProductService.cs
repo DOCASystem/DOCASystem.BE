@@ -67,8 +67,6 @@ public class ProductService : BaseService<ProductService>, IProductService
                 .Include(p => p.ProductImages)
                 .Include(p => p.ProductCategories).ThenInclude(pc => pc.Category)
             );
-        if (p.IsHidden && role != RoleEnum.Manager && role != RoleEnum.Staff && p == null)
-            throw new BadHttpRequestException(MessageConstant.Product.ProductIsHidden);
         var productResponse = new GetProductDetailResponse()
         {
             Id = p.Id,
