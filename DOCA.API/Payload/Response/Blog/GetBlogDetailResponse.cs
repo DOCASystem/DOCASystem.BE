@@ -12,7 +12,7 @@ public class GetBlogDetailResponse
     public DateTime CreatedAt { get; set; }
     public DateTime ModifiedAt { get; set; }
     public BlogEnum Status { get; set; }
-    public bool IsHidden { get; set; }
+    public bool IsHindden  { get; set; }
     public virtual ICollection<BlogCategoryResponse>? BlogCategories { get; set; }
     public virtual ICollection<GetAnimalResponse>? Animals { get; set; }
 }

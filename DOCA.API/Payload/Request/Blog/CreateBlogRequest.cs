@@ -10,7 +10,7 @@ public class CreateBlogRequest
     [Required]
     public string Description { get; set; }
     [Required]
-    public bool IsHidden { get; set; }
+    public bool IsHindden { get; set; }
     [Required]
     public BlogEnum Status { get; set; }
     public List<Guid>? BlogCategoryIds { get; set; }

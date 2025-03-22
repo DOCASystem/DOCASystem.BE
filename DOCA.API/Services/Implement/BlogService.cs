@@ -73,7 +73,7 @@ public class BlogService : BaseService<BlogService>, IBlogService
             Status = b.Status,
             CreatedAt = b.CreatedAt,
             ModifiedAt = b.ModifiedAt,
-            IsHidden = b.IsHindden,
+            IsHindden = b.IsHindden,
             BlogCategories = b.BlogCategoryRelationship.Select(ac => ac.BlogCategory)
                 .Select(c => new BlogCategoryResponse()
                 {

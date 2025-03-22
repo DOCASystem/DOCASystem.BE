@@ -10,5 +10,5 @@ public class GetBlogResponse
     public DateTime CreatedAt { get; set; }
     public BlogEnum Status { get; set; }
     public DateTime ModifiedAt { get; set; }
-    public bool IsHidden { get; set; }
+    public bool IsHindden { get; set; }
 }
