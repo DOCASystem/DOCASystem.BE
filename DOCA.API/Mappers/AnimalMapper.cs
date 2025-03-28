@@ -20,5 +20,7 @@ public class AnimalMapper : Profile
         CreateMap<Animal, GetAnimalResponse>()
             .ForMember(dest => dest.AnimalImage, 
                 opt => opt.MapFrom(src => src.AnimalImage));
+        CreateMap<AnimalImage, AnimalImage>()
+            .ForMember(dest => dest.Animal, opt => opt.Ignore());
     }
 }

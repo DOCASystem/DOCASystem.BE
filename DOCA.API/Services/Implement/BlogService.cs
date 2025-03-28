@@ -48,7 +48,7 @@ public class BlogService : BaseService<BlogService>, IBlogService
                         a.BlogAnimal.Any(bcr => bcr.BlogId == a.Id) ? a.BlogAnimal : null,  
                 }, page: page, size: size,
                 include: a => a.Include(a => a.BlogCategoryRelationship).ThenInclude(arc => arc.BlogCategory)
-                                            .Include(a=>a.BlogAnimal).ThenInclude(a=>a.Animal), 
+                                            .Include(a=>a.BlogAnimal).ThenInclude(a=>a.Animal).ThenInclude(a => a.AnimalImage), 
                 filter: filter,
                 sortBy: sortBy, isAsc: isAsc);
         var response = _mapper.Map<IPaginate<GetBlogDetailResponse>>(blogs);
