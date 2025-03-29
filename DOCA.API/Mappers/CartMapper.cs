@@ -13,7 +13,8 @@ public class CartMapper : Profile
             .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Name))
             .ForMember(dest => dest.ProductDescription, opt => opt.MapFrom(src => src.Description))
-            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price));
+            .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price))
+            .ForMember(dest => dest.Volume, opt => opt.MapFrom(src => src.Volume));
         
         CreateMap<Blog, CartModelResponse>()
             .ForMember(dest => dest.BlogId, opt => opt.MapFrom(src => src.Id))
