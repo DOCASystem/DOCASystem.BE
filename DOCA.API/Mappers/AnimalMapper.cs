@@ -12,15 +12,19 @@ public class AnimalMapper : Profile
     {
         CreateMap<AnimalImage, AnimalImageResponse>();
         CreateMap<CreateAnimalRequest, Animal>();
+
         CreateMap<Animal, GetAnimalDetailResponse>()
             .ForMember(dest => dest.AnimalCategories, 
                 opt => opt.MapFrom(src => src.AnimalCategoryRelationship!.Select(pc => pc.AnimalCategory)))
             .ForMember(dest => dest.AnimalImage, 
-                opt => opt.MapFrom(src => src.AnimalImage));
+                opt => opt.MapFrom(src => src.AnimalImage)); 
+
         CreateMap<Animal, GetAnimalResponse>()
             .ForMember(dest => dest.AnimalImage, 
-                opt => opt.MapFrom(src => src.AnimalImage));
+                opt => opt.MapFrom(src => src.AnimalImage)); 
+        
         CreateMap<AnimalImage, AnimalImage>()
             .ForMember(dest => dest.Animal, opt => opt.Ignore());
     }
+
 }

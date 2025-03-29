@@ -97,5 +97,5 @@ public class ApiEndPointConstant
         public const string PaymentEndPoint = ApiEndpoint + "/payments";
         public const string PaymentCheckOut = PaymentEndPoint + "/checkout";
     }
-
+    
 }

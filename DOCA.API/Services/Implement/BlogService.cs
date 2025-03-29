@@ -58,13 +58,14 @@ public class BlogService : BaseService<BlogService>, IBlogService
     public async Task<GetBlogDetailResponse> GetBlogByIdAsync(Guid id)
     {
         if (id == Guid.Empty) throw new BadHttpRequestException(MessageConstant.Blog.BlogIdNotNull);
+    
         var role = GetRoleFromJwt();
         var b = await _unitOfWork.GetRepository<Blog>().SingleOrDefaultAsync(
             predicate: b => b.Id.Equals(id),
             include: a => a.Include(a => a.BlogCategoryRelationship).ThenInclude(arc => arc.BlogCategory)
-                .Include(a=>a.BlogAnimal).ThenInclude(a=>a.Animal));
-        // if ( role != RoleEnum.Manager && role != RoleEnum.Staff)
-        //     throw new BadHttpRequestException(MessageConstant.Blog.BlogNotFound);
+                .Include(a => a.BlogAnimal).ThenInclude(a => a.Animal)
+                .ThenInclude(a => a.AnimalImage)); // Đảm bảo không có vòng lặp
+
         var response = new GetBlogDetailResponse()
         {
             Id = b.Id,
@@ -84,22 +85,12 @@ public class BlogService : BaseService<BlogService>, IBlogService
                     ModifiedAt = c.ModifiedAt,
                 })
                 .ToList(),
-            Animals = b.BlogAnimal.Select(ba=>ba.Animal)
-                .Select(c=> new GetAnimalResponse()
-                {
-                    Id = c.Id,
-                    Name = c.Name,
-                    Description = c.Description,
-                    Age = c.Age,
-                    Sex = c.Sex,
-                    CreatedAt = c.CreatedAt,
-                    ModifiedAt = c.ModifiedAt,
-                    AnimalImage = c.AnimalImage
-                })
-                .ToList()
+            Animals = _mapper.Map<List<GetAnimalResponse>>(b.BlogAnimal.Select(ba => ba.Animal).ToList())
         };
+
         return response;
     }
+
 
     public async Task<GetBlogResponse> CreateBlogAsync(CreateBlogRequest request)
     {
