@@ -39,8 +39,6 @@ public class PaymentService : BaseService<PaymentService>, IPaymentService
             include: m => m.Include(m => m.User)
             );
         if (member == null) throw new UnauthorizedAccessException(MessageConstant.User.UserNotFound);
-        // if( member.Commune == null || member.Province == null || member.District == null || member.Address == null) 
-        //     throw new BadHttpRequestException(MessageConstant.User.MemberAddressNotFound);
         
         var key = "Cart:" + userId;
         var cartData = await _redisService.GetStringAsync(key);
@@ -81,6 +79,7 @@ public class PaymentService : BaseService<PaymentService>, IPaymentService
                     .ThenInclude(b => b.BlogCategory)
                     .Include(b => b.BlogAnimal)
                     .ThenInclude(b => b.Animal)
+                    .ThenInclude(b=>b.AnimalImage)
             );
             if (product.Quantity < cartModel.Quantity) throw new BadHttpRequestException(MessageConstant.Product.ProductOutOfStock);
             var orderItem = new OrderItem()
@@ -88,12 +87,10 @@ public class PaymentService : BaseService<PaymentService>, IPaymentService
                 Id = Guid.NewGuid(),
                 ProductId = product.Id,
                 BlogID = blog.Id,
+                OrderId = order.Id,
                 Quantity = cartModel.Quantity,
                 CreatedAt = TimeUtil.GetCurrentSEATime(),
-                ModifiedAt =TimeUtil.GetCurrentSEATime(),
-                Order = order,
-                WarrantyCode = CodeUtil.GenerateWarrantyCode(product.Id),
-                WarrantyExpired = null
+                ModifiedAt =TimeUtil.GetCurrentSEATime()
             };
             orderItems.Add(orderItem);
             
