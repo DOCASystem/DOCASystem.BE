@@ -41,7 +41,7 @@ public class UserService : BaseService<UserService>, IUserService
             p.Username.Equals(request.UsernameOrPhoneNumber) &&
             p.Password.Equals(PasswordUtil.HashPassword(request.Password));
         var account = await _unitOfWork.GetRepository<User>().SingleOrDefaultAsync(predicate: searchFilter);
-        if (account == null) throw new BadHttpRequestException(MessageConstant.User.LoginFail);
+        if (account == null) throw new UnauthorizedAccessException(MessageConstant.User.LoginFail);
         RoleEnum role = EnumUtil.ParseEnum<RoleEnum>(account.Role.GetDescriptionFromEnum());
         Tuple<string, Guid> guidClaim = null;
         LoginResponse response = null;
