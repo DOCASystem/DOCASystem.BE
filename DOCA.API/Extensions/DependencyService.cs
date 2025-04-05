@@ -28,7 +28,7 @@ public static class DependencyService
     {
         IConfiguration configuration = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true).Build();
-        service.AddDbContext<DOCADbContext>(options => options.UseSqlServer(CreateConnectionString(configuration)));
+        service.AddDbContext<DOCADbContext>(options => options.UseSqlServer(CreateConnectionString(configuration),b => b.MigrationsAssembly("DOCA.Domain")));
         service.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         service.AddScoped<DbContext, DOCADbContext>();
         

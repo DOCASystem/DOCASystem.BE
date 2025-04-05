@@ -134,9 +134,8 @@ public class PaymentService : BaseService<PaymentService>, IPaymentService
                 foreach (var orderItem in orderItems) 
                 { 
                     orderItem.OrderId = order.Id; 
-                } 
+                }
                 await _unitOfWork.GetRepository<OrderItem>().InsertRangeAsync(orderItems);
-                
                 var isSuccess = await _unitOfWork.CommitAsync() > 0; 
                 transaction.Complete(); 
                 if (!isSuccess) throw new BadHttpRequestException(MessageConstant.Order.CreateOrderFail);
@@ -144,9 +143,9 @@ public class PaymentService : BaseService<PaymentService>, IPaymentService
                     orderCode, 
                     (int)order.Total, 
                     "Thanh toán đơn hàng", 
-                    items, 
+                    items,                                                                                                              
                     "https://doca.love/", 
-                    "https://doca.love/",
+                    "https://doca.love/",           
                     buyerName: member.User.FullName, 
                     buyerPhone: member.User.PhoneNumber,
                     expiredAt: ((DateTimeOffset) TimeUtil.GetCurrentSEATime().AddMinutes(10)).ToUnixTimeSeconds()
