@@ -22,6 +22,7 @@ public class AuthController : BaseController<AuthController>
 
     [HttpPost(ApiEndPointConstant.Auth.Login)]
     [ProducesResponseType(typeof(LoginResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status401Unauthorized)] 
     [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
     {
@@ -29,7 +30,7 @@ public class AuthController : BaseController<AuthController>
         if (loginResponse == null)
         {
             _logger.LogError($"Login failed with {loginRequest.UsernameOrPhoneNumber}");
-            return Problem(MessageConstant.User.LoginFail);
+            return Unauthorized(MessageConstant.User.LoginFail); 
         }
         _logger.LogInformation($"Login successful with {loginRequest.UsernameOrPhoneNumber}");
         return Ok(loginResponse);
