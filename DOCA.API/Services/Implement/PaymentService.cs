@@ -139,10 +139,12 @@ public class PaymentService : BaseService<PaymentService>, IPaymentService
                 var isSuccess = await _unitOfWork.CommitAsync() > 0; 
                 transaction.Complete(); 
                 if (!isSuccess) throw new BadHttpRequestException(MessageConstant.Order.CreateOrderFail);
+                var random = new Random();
+                var randomDigits = random.Next(10000, 99999);
                 PaymentData paymentData = new PaymentData(
                     orderCode, 
                     (int)order.Total, 
-                    "Thanh toán đơn hàng", 
+                    $"Thanh toán đơn hàng {randomDigits}", 
                     items,                                                                                                              
                     "https://doca.love/", 
                     "https://doca.love/",           
