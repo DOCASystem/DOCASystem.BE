@@ -123,7 +123,7 @@ public class UserService : BaseService<UserService>, IUserService
         user.Password = PasswordUtil.HashPassword(request.Password);
         user.Role = RoleEnum.Member;
 
-        var member = new Member { Id = Guid.NewGuid(), UserId = user.Id };
+        var member = new Member { Id = Guid.NewGuid(), UserId = user.Id, User = user };
 
         // Sử dụng TransactionScope để quản lý giao dịch
         using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
