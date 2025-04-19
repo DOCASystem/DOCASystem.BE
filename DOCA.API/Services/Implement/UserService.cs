@@ -207,32 +207,6 @@ public class UserService : BaseService<UserService>, IUserService
         if (isSuccess) response = _mapper.Map<UserResponse>(member.User);
         return response;
     }
-
-
-    // public async Task<string> GenerateOtpAsync(GenerateOtpRequest request)
-    // {
-    //     // var redis = ConnectionMultiplexer.Connect(_configuration.GetConnectionString("Redis"));
-    //     // var db = redis.GetDatabase();
-    //     var key = request.PhoneNumber;
-    //     
-    //     var existingOtp = await _redisService.GetStringAsync(key);
-    //     if (!string.IsNullOrEmpty(existingOtp)) throw new BadHttpRequestException(MessageConstant.Sms.OtpAlreadySent);
-    //     
-    //     if(request.PhoneNumber == null) throw new BadHttpRequestException(MessageConstant.User.PhoneNumberNotFound);
-    //     var phoneNumberArray = new string[] { request.PhoneNumber };
-    //     var otp = OtpUtil.GenerateOtp();
-    //     var content = "Mã OTP của bạn là: " + otp;
-    //     var response = SmsUtil.sendSMS(phoneNumberArray, content, _configuration);
-    //     _logger.LogInformation(response);
-    //     var smsResponse = JsonSerializer.Deserialize<SmsModel.SmsResponse>(response);
-    //     if (smsResponse.status != "success" && smsResponse.code != "00")
-    //     {
-    //         throw new BadHttpRequestException(MessageConstant.Sms.SendSmsFailed);
-    //     }
-    //     
-    //     await _redisService.SetStringAsync(key, otp, TimeSpan.FromMinutes(2));
-    //     return request.PhoneNumber;
-    // }
     
     
     public async Task<string> GenerateOtpAsync(GenerateEmailOtpRequest request)
@@ -307,6 +281,7 @@ public class UserService : BaseService<UserService>, IUserService
             {
                 Id = m.Id,
                 UserId = m.UserId,
+                User = m.User,
                 Address = m.Address,
                 Commune = m.Commune,
                 District = m.District,
@@ -314,16 +289,32 @@ public class UserService : BaseService<UserService>, IUserService
                 ProvinceCode = m.ProvinceCode,
                 CommuneCode = m.CommuneCode,
                 DistrictCode = m.DistrictCode,
-                Orders = m.Orders
+                Orders = m.Orders.Any(acr => acr.MemberId == m.Id) ? m.Orders : null,
             },
             page: page,
             size: size,
             filter: filter,
-            include: m => m.Include(m => m.User),
+            include: m => m.Include(m => m.User)
+                .Include(o => o.Orders),
             sortBy: sortBy,
             isAsc: isAsc
         );
         var response = _mapper.Map<IPaginate<MemberResponse>>(members);
+        for (int i = 0; i < response.Items.Count; i++)
+        {
+            var entity = members.Items[i];
+            var dto = response.Items[i];
+
+            var m = await  _unitOfWork.GetRepository<User>().SingleOrDefaultAsync(
+                predicate: u => u.Id == entity.UserId
+            );
+            if (m != null)
+            {
+                dto.Username = m.Username;
+                dto.FullName = m.FullName;
+                dto.PhoneNumber = m.PhoneNumber;
+            }
+        }
         return response;
     }
 
@@ -414,6 +405,21 @@ public class UserService : BaseService<UserService>, IUserService
             include: o => o.Include(o => o.User)
         );
         var responses = _mapper.Map<IPaginate<MemberResponse>>(members);
+        for (int i = 0; i < responses.Items.Count; i++)
+        {
+            var entity = members.Items[i];
+            var dto = responses.Items[i];
+
+            var m = await  _unitOfWork.GetRepository<User>().SingleOrDefaultAsync(
+                predicate: u => u.Id == entity.UserId
+            );
+            if (m != null)
+            {
+                dto.Username = m.Username;
+                dto.FullName = m.FullName;
+                dto.PhoneNumber = m.PhoneNumber;
+            }
+        }
         return responses;
     }
     
