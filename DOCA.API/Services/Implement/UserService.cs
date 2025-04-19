@@ -123,7 +123,7 @@ public class UserService : BaseService<UserService>, IUserService
         user.Password = PasswordUtil.HashPassword(request.Password);
         user.Role = RoleEnum.Member;
 
-        var member = new Member { Id = Guid.NewGuid(), UserId = user.Id, User = user };
+        var member = new Member { Id = Guid.NewGuid(), UserId = user.Id };
 
         // Sử dụng TransactionScope để quản lý giao dịch
         using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
@@ -307,7 +307,6 @@ public class UserService : BaseService<UserService>, IUserService
             {
                 Id = m.Id,
                 UserId = m.UserId,
-                User = m.User,
                 Address = m.Address,
                 Commune = m.Commune,
                 District = m.District,
@@ -391,7 +390,33 @@ public class UserService : BaseService<UserService>, IUserService
         if(isSuccess) return _mapper.Map<StaffResponse>(staff);
         return response;
     }
-
+    
+    public async Task<IPaginate<MemberResponse>> GetAllMember(int page, int size, MemberFilter? filter, string? sortBy, bool isAsc)
+    {
+        var members = await _unitOfWork.GetRepository<Member>().GetPagingListAsync(
+            selector: o => new Member()
+            {
+                Id = o.Id,
+                UserId = o.UserId,
+                Province = o.Province,
+                ProvinceCode = o.ProvinceCode,
+                District = o.District,
+                Address = o.Address,
+                DistrictCode = o.DistrictCode,
+                Commune = o.Commune,
+                Orders = o.Orders
+            },
+            page: page,
+            size: size,
+            filter: filter,
+            sortBy: sortBy,
+            isAsc: isAsc,
+            include: o => o.Include(o => o.User)
+        );
+        var responses = _mapper.Map<IPaginate<MemberResponse>>(members);
+        return responses;
+    }
+    
     public async Task<StaffResponse> GetStaffById(Guid id)
     {
         if (id == Guid.Empty) throw new BadHttpRequestException(MessageConstant.User.StaffIdNotNull);

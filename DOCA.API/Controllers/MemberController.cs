@@ -5,6 +5,7 @@ using DOCA.API.Payload.Response.Account;
 using DOCA.API.Payload.Response.Member;
 using DOCA.API.Services.Interface;
 using DOCA.API.Validators;
+using DOCA.Domain.Filter;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DOCA.API.Controllers;
@@ -25,6 +26,14 @@ public class MemberController : BaseController<MemberController>
     public async Task<IActionResult> GetMemberInformationAsync()
     {
         var member = await _userService.GetMemberInformationAsync();
+        return Ok(member);
+    }
+    [HttpGet(ApiEndPointConstant.Member.MemberEndpoint)]
+    [ProducesResponseType(typeof(MemberResponse), statusCode: StatusCodes.Status200OK)]
+    [CustomAuthorize(RoleEnum.Manager, RoleEnum.Staff)]
+    public async Task<IActionResult> GerAllMemberAsync(int page = 1, int size = 30,[FromQuery] MemberFilter? filter = null, string? sortBy = null, bool isAsc = true)
+    {
+        var member = await _userService.GetAllMember(page, size, filter, sortBy, isAsc);
         return Ok(member);
     }
     [HttpPatch(ApiEndPointConstant.Member.MemberEndpoint)]

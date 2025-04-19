@@ -24,6 +24,6 @@ public interface IUserService
    Task<IPaginate<StaffResponse>> GetStaffsAsync(int page, int size, StaffFilter? filter, string? sortBy, bool isAsc);
    Task<UserResponse> UpdateStaffAsync(Guid staffId, UpdateStaffRequest request);
    Task<StaffResponse> CreateStaffAsync(CreateStaffRequest request);
-    
+   Task<IPaginate<MemberResponse>> GetAllMember(int page, int size, MemberFilter? filter, string? sortBy, bool isAsc);
    Task<StaffResponse> GetStaffById(Guid id);
 }

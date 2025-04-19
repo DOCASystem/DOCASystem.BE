@@ -60,6 +60,30 @@ public class OrderService : BaseService<OrderService>, IOrderService
                 orderResponses = _mapper.Map<IPaginate<OrderResponse>>(ordersWithMemberId);
                 break;
             case RoleEnum.Manager:
+                var allorders = await _unitOfWork.GetRepository<Order>().GetPagingListAsync(
+                    selector: o => new Order()
+                    {
+                        Id = o.Id,
+                        CreatedAt = o.CreatedAt,
+                        ModifiedAt = o.ModifiedAt,
+                        Status = o.Status,
+                        Total = o.Total,
+                        Address = o.Address,
+                        MemberId = o.MemberId,
+                        PaymentId = o.PaymentId,
+                        Member = o.Member
+                    },
+                    page: page,
+                    size: size,
+                    filter: filter,
+                    sortBy: sortBy,
+                    isAsc: isAsc,
+                    include: o => o.Include(o => o.Member)
+                        .ThenInclude(m => m.User)
+                        .Include(o => o.Payment)
+                );
+                orderResponses = _mapper.Map<IPaginate<OrderResponse>>(allorders);
+                break;
             case RoleEnum.Staff:
                 var orders = await _unitOfWork.GetRepository<Order>().GetPagingListAsync(
                     selector: o => new Order()

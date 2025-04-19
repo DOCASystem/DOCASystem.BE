@@ -62,6 +62,7 @@ public class AuthController : BaseController<AuthController>
     
         return CreatedAtAction(nameof(SendOtp), result);
     }
+    
     [HttpPatch(ApiEndPointConstant.Auth.ForgetPassword)]
     [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
