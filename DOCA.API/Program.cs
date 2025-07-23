@@ -17,7 +17,6 @@ try
         options.AddPolicy(CorConstant.PolicyName,
             policy => { policy.WithOrigins("*").AllowAnyHeader().AllowAnyMethod(); });
     });
-    // builder.Services.AddHostedService<CancelOrderService>();
     builder.Services.Configure<HostOptions>(hostOptions =>
     {
         hostOptions.BackgroundServiceExceptionBehavior = BackgroundServiceExceptionBehavior.Ignore;
